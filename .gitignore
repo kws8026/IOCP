@@ -1,0 +1,58 @@
+# Prerequisites
+*.d
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+.vs/IOCP/v16/Browse.VC.opendb
+.vs/IOCP/v16/Browse.VC.db
+.vs/IOCP/v16/.suo
+.vs/IOCP/v16/ipch/72e097e03796ea2b.ipch
+.vs/IOCP/v16/ipch/8a80a3c0e6e05b0b.ipch
+.vs/IOCP/v16/ipch/ad46413fce1aa3ae.ipch
+.vs/IOCP/v16/ipch/AutoPCH/1f797562f3f26215/LOG.ipch
+.vs/IOCP/v16/ipch/AutoPCH/2a02a5eab887d589/CIRCULARBUFFER.ipch
+.vs/IOCP/v16/ipch/AutoPCH/31af3f643007cb0d/CRITICALSECTION.ipch
+.vs/IOCP/v16/ipch/AutoPCH/33b5444657d24dc6/NETWORK.ipch
+.vs/IOCP/v16/ipch/AutoPCH/354b995d0279ebdb/SOCKET.ipch
+.vs/IOCP/v16/ipch/AutoPCH/5c8f9647bdd83ca3/SERVERSESSION.ipch
+.vs/IOCP/v16/ipch/AutoPCH/653a4f08969f581d/MSWINSOCK.ipch
+.vs/IOCP/v16/ipch/AutoPCH/658576b66b79c8b0/CIRCULARBUFFER.ipch
+.vs/IOCP/v16/ipch/AutoPCH/793081ca54e6d276/CIRCULARBUFFER.ipch
+.vs/IOCP/v16/ipch/AutoPCH/8dde18da634365b8/CIRCULARBUFFER.ipch
+.vs/IOCP/v16/ipch/AutoPCH/d60375eeda60096f/CIRCULARBUFFER.ipch
+.vs/IOCP/v16/ipch/AutoPCH/e89470bd20ce7a60/CIRCULARBUFFER.ipch
+.vs/IOCP/v16/ipch/AutoPCH/f58c6f89db932637/NETWORK.ipch
+.vs/IOCP/v16/Solution.VC.db
+.vs/IOCP/v16/Solution.VC.db-shm
+.vs/IOCP/v16/Solution.VC.db-wal
+*.idb
+*.log
+*.pdb
+*.tlog
