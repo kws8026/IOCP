@@ -6,7 +6,7 @@
 #include "WinSock.h"
 #include "Logger.h"
 
-class cSession
+typedef class cSession
 {
 	SOCKET		sock;
 	SOCKADDR_IN addr;
@@ -17,6 +17,6 @@ public:
 	void		Close();
 	BOOL		AcceptEX();
 	BOOL		ConnectEX();
-};
+}SESSION, *LPSESSION;
 
 #endif
