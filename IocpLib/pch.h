@@ -13,7 +13,9 @@
 #include "CompletionPort.h"
 #include "Event.h"
 #include "Logger.h"
-#include "Socket.h"
+#include "Session.h"
 #include "Thread.h"
+#include "Objectpool.h"
+#include "Singleton.h"
 
 #endif //PCH_H

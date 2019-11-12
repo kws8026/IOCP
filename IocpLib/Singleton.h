@@ -8,22 +8,22 @@ class cSingleton
 	static T* pInstance;
 public:
 	cSingleton() {}
-	~cSingleton() {
-			if (pInstance) {
-				pInstance = NULL;
-			}
+	virtual ~cSingleton() {
+		if (pInstance) {
+			pInstance = NULL;
 		}
+	}
 	static T* Instance() {
-			if (pInstance == nullptr) {
-				pInstance = new T;
-			}
-			return pInstance;
+		if (pInstance == nullptr) {
+			pInstance = new T;
 		}
+		return pInstance;
+	}
 	static void Destroy() {
-			if(pInstance)
-				delete pInstance;
-		}
+		if (pInstance)
+			delete pInstance;
+	}
 };
-template<typename T> T* cSingleton<T>::pInstance = 0;
 
+template<typename T> T* cSingleton<T>::pInstance = nullptr;
 #endif 

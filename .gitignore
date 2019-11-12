@@ -58,3 +58,4 @@
 *.tlog
 *.db
 .vs/IOCP/v15/.suo
+*.ipch
