@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "Session.h"
-
 cSession::cSession() : sock(INVALID_SOCKET),addr()
 {
 }

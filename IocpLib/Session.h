@@ -4,7 +4,6 @@
 #define __SESSION_IOCP
 
 #include "WinSock.h"
-#include "Logger.h"
 
 typedef class cSession
 {
