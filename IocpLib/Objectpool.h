@@ -4,10 +4,14 @@
 
 #include "Singleton.h"
 #include "Logger.h"
+#include "FastSpinlock.h"
+
+#define _WINSOCKAPI_
 #include <Windows.h>
 
 template <typename Object>
-class cObjectPool : cSingleton<cObjectPool>				// 싱글톤 패턴을 사용하여 오브젝트마다 하나의 오브젝트풀만 만들도록 함
+class cObjectPool : 
+	public ClassTypeLock<Object>,cSingleton<cObjectPool>				// 싱글톤 패턴을 사용하여 오브젝트마다 하나의 오브젝트풀만 만들도록 함
 {
 	Object**		objects;							// 오브젝트의 포인터가 적재된 배열
 	DWORD			capacity;							// 리스트의 캐퍼시티
@@ -50,7 +54,10 @@ public:
 		}
 		delete[] objects;
 	};
-	bool	CreatePool(DWORD _capacity, bool expansion = false) {
+	bool	CreatePool(DWORD _capacity = 100, bool expansion = false) {
+		
+		LockGuard spinlock;
+
 		if (capacity != 0){
 			ERROR_CODE("Already Created ObjectPool");
 			return nullptr;				// 이미 캐퍼시티가 지정 되어있으면 실패
@@ -73,6 +80,9 @@ public:
 		return true;
 	};
 	Object*	New() {
+
+		LockGuard spinlock;
+
 		if (capacity == size) {			// 오브젝트가 최대치만크 생성된 경우
 			if (!bExpansion) {			// 더 이상 오브젝트를 생성할 수 없음
 				ERROR_CODE("ObjectPool is fulled");
@@ -87,6 +97,9 @@ public:
 		return pReturn;
 	};
 	bool	Delete(T* object) {
+
+		LockGuard spinlock;
+
 		for (int i = 0; i < size; i++) {
 			if (objects[i] = object) {
 				auto target = object[--size];   // 사이즈를 감소시키고 말단의 오브젝트를 임시저장

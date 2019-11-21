@@ -10,12 +10,17 @@ typedef class cSession
 	SOCKET		sock;
 	SOCKADDR_IN addr;
 public:
-	cSession();
-	~cSession();
-	bool		Create(WORD port, bool bBind = false);
+				cSession();
+	virtual		~cSession();
+
+	virtual void OnReceive(size_t len);
+	virtual void OnDisconnect() {}
+	virtual void OnRelease() {}
+
 	void		Close();
-	BOOL		AcceptEX();
-	BOOL		ConnectEX();
+
+
+
 }SESSION, *LPSESSION;
 
 #endif

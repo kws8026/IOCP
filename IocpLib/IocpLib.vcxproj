@@ -153,8 +153,8 @@
   <ItemGroup>
     <ClInclude Include="ClientSession.h" />
     <ClInclude Include="CriticalSection.h" />
-    <ClInclude Include="Event.h" />
     <ClInclude Include="CompletionPort.h" />
+    <ClInclude Include="FastSpinlock.h" />
     <ClInclude Include="Logger.h" />
     <ClInclude Include="Objectpool.h" />
     <ClInclude Include="OverlappedIOContext.h" />
@@ -168,8 +168,8 @@
   <ItemGroup>
     <ClCompile Include="ClientSession.cpp" />
     <ClCompile Include="CriticalSection.cpp" />
-    <ClCompile Include="Event.cpp" />
     <ClCompile Include="CompletionPort.cpp" />
+    <ClCompile Include="FastSpinlock.cpp" />
     <ClCompile Include="Logger.cpp" />
     <ClCompile Include="Session.cpp" />
     <ClCompile Include="IocpLib.cpp" />

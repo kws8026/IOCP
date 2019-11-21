@@ -2,8 +2,10 @@
 #ifndef __SINGLETON_TEMPLATE
 #define __SINGLETON_TEMPLATE
 
+#include "FastSpinlock.h"
+
 template <typename T>
-class cSingleton
+class cSingleton : public ClassTypeLock<T>
 {
 	static T* pInstance;
 public:
@@ -14,6 +16,7 @@ public:
 		}
 	}
 	static T* Instance() {
+		LockGuard spinlock;
 		if (pInstance == nullptr) {
 			pInstance = new T;
 		}

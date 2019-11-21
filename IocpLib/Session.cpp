@@ -2,28 +2,14 @@
 #include "Session.h"
 cSession::cSession() : sock(INVALID_SOCKET),addr()
 {
+	sock = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, WSA_FLAG_OVERLAPPED);
 }
 
 cSession::~cSession()
 {
 }
 
-bool cSession::Create(WORD port, bool bBind)
-{
-	return true;
-}
-
 void cSession::Close()
 {
 	closesocket(sock);
-}
-
-BOOL cSession::AcceptEX()
-{
-	return 0;
-}
-
-BOOL cSession::ConnectEX()
-{
-	return 0;
 }

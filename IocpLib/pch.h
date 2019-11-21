@@ -11,11 +11,11 @@
 #include "framework.h"
 #include "ClientSession.h"
 #include "CompletionPort.h"
-#include "Event.h"
 #include "Logger.h"
 #include "Session.h"
 #include "Thread.h"
 #include "Objectpool.h"
+#include "OverlappedIOContext.h"
 #include "Singleton.h"
 
 #endif //PCH_H

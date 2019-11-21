@@ -1,6 +1,31 @@
 #pragma once
+#ifndef __CLIENTSESSION_IOCP
+#define __CLIENTSESSION_IOCP
 
-class cClientSession
+#include "Session.h"
+#include "Objectpool.h"
+
+class ClientSessionManager;
+
+class cClientSession : public SESSION, public cObjectPool<cClientSession>
 {
+
+public:
+				cClientSession();
+	virtual		~cClientSession();
+
+	void		ResetSession();
+
+	bool		PostAccept();
+	bool		AcceptCompletion();
+
+	virtual void OnReceive(size_t len) {}
+	virtual void OnSend(size_t len) {}
+	virtual void OnDisconnect();
+	virtual void OnRelease();
+
+	friend class ClientSessionManager;
 };
+
+#endif 
 
