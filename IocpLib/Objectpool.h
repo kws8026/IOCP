@@ -11,7 +11,7 @@
 
 template <typename Object>
 class cObjectPool : 
-	public ClassTypeLock<Object>,cSingleton<cObjectPool>				// 싱글톤 패턴을 사용하여 오브젝트마다 하나의 오브젝트풀만 만들도록 함
+	public ClassTypeLock<cObjectPool>					// 싱글톤 패턴을 사용하여 오브젝트마다 하나의 오브젝트풀만 만들도록 함
 {
 	Object**		objects;							// 오브젝트의 포인터가 적재된 배열
 	DWORD			capacity;							// 리스트의 캐퍼시티
@@ -54,8 +54,7 @@ public:
 		}
 		delete[] objects;
 	};
-	bool	CreatePool(DWORD _capacity = 100, bool expansion = false) {
-		
+	static bool		CreatePool(DWORD _capacity = 100, bool expansion = false) {
 		LockGuard spinlock;
 
 		if (capacity != 0){
@@ -79,7 +78,7 @@ public:
 		LOG("Create ObjectPool objects : %d",capacity);
 		return true;
 	};
-	Object*	New() {
+	static Object*	New() {
 
 		LockGuard spinlock;
 
@@ -96,14 +95,14 @@ public:
 		ZeroMemory(pReturn,sizeof(Object));
 		return pReturn;
 	};
-	bool	Delete(T* object) {
+	static bool		Delete(Object* object) {
 
 		LockGuard spinlock;
 
 		for (int i = 0; i < size; i++) {
 			if (objects[i] = object) {
-				auto target = object[--size];   // 사이즈를 감소시키고 말단의 오브젝트를 임시저장
-				object[size] = objects[i];		// 해제한 오브젝트를 배열의 말단으로 배치
+				auto target = objects[--size];   // 사이즈를 감소시키고 말단의 오브젝트를 임시저장
+				objects[size] = objects[i];		// 해제한 오브젝트를 배열의 말단으로 배치
 				objects[i] = target;			// 임시저장된 오브젝트를 해제한 오브젝트가 있던 위치로 이동
 				return true;
 			}
@@ -112,9 +111,7 @@ public:
 		return false;							// 할당 리스트에서 해당하는 오브젝트를 찾지 못했을 경우
 	};
 };
-
-
-#define NEW() cObjectPool::Instance()->New();
-#define DELETE(object) cObjectPool::Instance()->Delete(object);
-
 #endif
+
+#define NEW(Object_type) cObjectPool<Object_type>::New();
+#define DELETE(Object_type,object)	cObjectPool<Object_type>::Delete(static_cast<Object_type*>(object));

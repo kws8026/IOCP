@@ -9,6 +9,12 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
+    <Filter Include="세션 파일">
+      <UniqueIdentifier>{100141ed-b714-4102-9e9a-f4cb68b218e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="유틸리티">
+      <UniqueIdentifier>{1ff203ed-2b39-454b-936e-9b4e5ab46038}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -17,38 +23,41 @@
     <ClInclude Include="pch.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Logger.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="ClientSession.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="Thread.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="Singleton.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="CompletionPort.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="CriticalSection.h">
-      <Filter>헤더 파일</Filter>
+    <ClInclude Include="Session.h">
+      <Filter>세션 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Objectpool.h">
-      <Filter>헤더 파일</Filter>
+    <ClInclude Include="ClientSession.h">
+      <Filter>세션 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Logger.h">
+      <Filter>유틸리티</Filter>
+    </ClInclude>
+    <ClInclude Include="Singleton.h">
+      <Filter>유틸리티</Filter>
     </ClInclude>
     <ClInclude Include="WinSock.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="Session.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="OverlappedIOContext.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>유틸리티</Filter>
     </ClInclude>
     <ClInclude Include="FastSpinlock.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>유틸리티</Filter>
+    </ClInclude>
+    <ClInclude Include="CriticalSection.h">
+      <Filter>유틸리티</Filter>
+    </ClInclude>
+    <ClInclude Include="OverlappedIOContext.h">
+      <Filter>세션 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Objectpool.h">
+      <Filter>유틸리티</Filter>
+    </ClInclude>
+    <ClInclude Include="ServerSession.h">
+      <Filter>세션 파일</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -58,26 +67,29 @@
     <ClCompile Include="pch.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Logger.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="ClientSession.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="Thread.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="CompletionPort.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="CriticalSection.cpp">
-      <Filter>소스 파일</Filter>
+    <ClCompile Include="ClientSession.cpp">
+      <Filter>세션 파일</Filter>
     </ClCompile>
     <ClCompile Include="Session.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>세션 파일</Filter>
     </ClCompile>
     <ClCompile Include="FastSpinlock.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>유틸리티</Filter>
+    </ClCompile>
+    <ClCompile Include="CriticalSection.cpp">
+      <Filter>유틸리티</Filter>
+    </ClCompile>
+    <ClCompile Include="Logger.cpp">
+      <Filter>유틸리티</Filter>
+    </ClCompile>
+    <ClCompile Include="ServerSession.cpp">
+      <Filter>세션 파일</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -26,7 +26,7 @@ public:
 }Debug;
 
 #define LOG(msg, ...) cLogger::Instance()->Log(msg, __VA_ARGS__);
-#define ERROR_MSG(msg, ...) cLogger::Instance()->Error(__FILE__, __FUNCTION__, __LINE__, msg, __VA_ARGS__);
+#define LOG_ERROR(msg, ...) cLogger::Instance()->Error(__FILE__, __FUNCTION__, __LINE__, msg, __VA_ARGS__);
 #define ERROR_CODE(code, msg, ...) cLogger::Instance()->Error(__FILE__, __FUNCTION__, __LINE__, code, msg, __VA_ARGS__);
 
 #endif

@@ -4,6 +4,7 @@
 #define __OVERLAPPEDIOCONTEXT_IOCP
 
 #include "Session.h"
+#include "Objectpool.h"
 
 enum IOCommend { 
 	IO_Default = 137,
@@ -73,5 +74,41 @@ typedef struct stDisconnectContext
 		CreatePool();
 	}
 }CONTEXT_DISCON, * LPCONTEXT_DISCON;
+
+void DeleteIoContext(LPIOCONTEXT context) {
+	if (nullptr == context) {
+		return;
+	}
+	/// ObjectPool's operate delete dispatch
+	switch (context->cmd)
+	{
+	case IO_Send:
+		DELETE(CONTEXT_SEND,context);
+		break;
+
+	case IO_RecvZero:
+		DELETE(CONTEXT_PRERECV, context);
+		break;
+
+	case IO_Recv:
+		DELETE(CONTEXT_RECV, context); 
+		break;
+
+	case IO_Accept:
+		DELETE(CONTEXT_ACCEPT, context); 
+		break;
+
+	case IO_Connect:
+		DELETE(CONTEXT_CON, context); 
+		break;
+
+	case IO_Disconnect:
+		DELETE(CONTEXT_DISCON, context);
+		break;
+
+	default:
+		LOG_ERROR("Invalide Commend");
+	}
+};
 
 #endif 

@@ -18,7 +18,7 @@ namespace NETWORK{
 		WSADATA wsa;
 		if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
 		{
-			ERROR_MSG("WSAStartup failed.");
+			LOG_ERROR("WSAStartup failed.");
 			return false;	
 		}
 		return true;
@@ -35,7 +35,7 @@ namespace NETWORK{
 			NULL, 0, 
 			WSA_FLAG_OVERLAPPED);
 		if (sock == INVALID_SOCKET) {
-			ERROR_MSG("Fail to Create TCP Socket");
+			LOG_ERROR("Fail to Create TCP Socket");
 			return false;
 		}
 		return true;
@@ -52,7 +52,7 @@ namespace NETWORK{
 
 		if (SOCKET_ERROR == bind(sock, (SOCKADDR*)&serveraddr, sizeof(serveraddr)))
 		{
-			ERROR_MSG("Fail to Bind");
+			LOG_ERROR("Fail to Bind");
 			return false;
 		}
 		return true;

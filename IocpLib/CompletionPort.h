@@ -25,6 +25,10 @@ public:
 	bool StartThreads();
 	void StartAccept();
 
+	SOCKET GetListenSocket() { return listenSocket; };
+	HANDLE GetHandle() { return hIOCP; };
 };
+
+#define IOCP cCompletionPort::Instance()
 
 #endif 

@@ -26,7 +26,7 @@ bool cCompletionPort::Initialize()
 	hIOCP = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, 0, 0);
 	if (hIOCP == INVALID_HANDLE_VALUE)
 	{	
-		ERROR_MSG("Fail Create IOCP");
+		LOG_ERROR("Fail Create IOCP");
 		return false;
 	}
 
@@ -39,7 +39,7 @@ bool cCompletionPort::Initialize()
 	HANDLE handle = CreateIoCompletionPort((HANDLE)listenSocket, hIOCP, 0, 0);
 	if (handle != hIOCP)
 	{
-		ERROR_MSG("Fail To Registe Listen socket to IOCP");
+		LOG_ERROR("Fail To Registe Listen socket to IOCP");
 		return false;
 	}
 

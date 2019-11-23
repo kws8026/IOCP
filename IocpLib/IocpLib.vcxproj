@@ -158,6 +158,7 @@
     <ClInclude Include="Logger.h" />
     <ClInclude Include="Objectpool.h" />
     <ClInclude Include="OverlappedIOContext.h" />
+    <ClInclude Include="ServerSession.h" />
     <ClInclude Include="Singleton.h" />
     <ClInclude Include="Session.h" />
     <ClInclude Include="framework.h" />
@@ -171,6 +172,7 @@
     <ClCompile Include="CompletionPort.cpp" />
     <ClCompile Include="FastSpinlock.cpp" />
     <ClCompile Include="Logger.cpp" />
+    <ClCompile Include="ServerSession.cpp" />
     <ClCompile Include="Session.cpp" />
     <ClCompile Include="IocpLib.cpp" />
     <ClCompile Include="pch.cpp">
