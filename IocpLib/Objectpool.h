@@ -10,9 +10,9 @@
 #include <Windows.h>
 
 template <typename Object>
-class cObjectPool : 
-	public ClassTypeLock<Object>				
+class cObjectPool 
 {
+	static SPINLOCK		lock;
 	static Object**		objects;							// 오브젝트의 포인터가 적재된 배열
 	static WORD			capacity;							// 리스트의 캐퍼시티
 	static WORD			size;								// 할당 리스트의 크기
@@ -54,8 +54,7 @@ public:
 		delete[] objects;
 	};
 	static bool		CreatePool(WORD _capacity = 100, bool expansion = false) {
-		//LockGuard spinlock;
-
+		FastSpinlockGuard enter(lock);
 		if (capacity != 0){
 			LOG_ERROR("Already Created ObjectPool");
 			return nullptr;				// 이미 캐퍼시티가 지정 되어있으면 실패
@@ -78,9 +77,7 @@ public:
 		return true;
 	};
 	static Object*	New() {
-
-		//LockGuard spinlock;
-
+		FastSpinlockGuard enter(lock);
 		if (capacity == size) {			// 오브젝트가 최대치만크 생성된 경우
 			if (!bExpansion) {			// 더 이상 오브젝트를 생성할 수 없음
 				LOG_ERROR("ObjectPool is fulled");
@@ -95,9 +92,7 @@ public:
 		return pReturn;
 	};
 	static bool		Release(Object* object) {
-
-		//LockGuard spinlock;
-
+		FastSpinlockGuard enter(lock);
 		for (int i = 0; i < size; i++) {
 			if (objects[i] == object) {
 				auto target = objects[--size];   // 사이즈를 감소시키고 말단의 오브젝트를 임시저장

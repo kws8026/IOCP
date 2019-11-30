@@ -15,7 +15,6 @@ cClientSession::~cClientSession()
 
 void cClientSession::ResetSession()
 {
-	FastSpinlockGuard criticalSection(lock);
 	memset(&addr, 0, sizeof(SOCKADDR_IN));
 
 	LINGER lingerOption;

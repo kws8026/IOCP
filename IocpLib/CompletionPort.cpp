@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "ClientSessionManager.h"
 
 cCompletionPort::cCompletionPort() : hIOCP(NULL), listenSocket(NULL)
 {
@@ -89,7 +90,7 @@ void cCompletionPort::StartAccept()
 
 	LOG("Start Accept");
 
-	while (true) // ¾ï¼ÁÆ® ÇÔ¼ö
+	while (CLIENTS->AcceptClientSessions()) // ¾ï¼ÁÆ® ÇÔ¼ö
 	{
 		Sleep(32);
 	}

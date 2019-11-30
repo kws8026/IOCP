@@ -5,6 +5,7 @@
 
 #include <Ws2tcpip.h>
 #include "FastSpinlock.h"
+#include "CircularBuffer.h"
 
 #define MAX_OF_BUFFER 1024
 
@@ -13,8 +14,11 @@ typedef class cSession
 protected:
 	SOCKET		sock;
 	SOCKADDR_IN addr;
-	SPINLOCK	lock;
-	char		buf[MAX_OF_BUFFER];
+	SPINLOCK	lock_Session;
+	CircularBuffer	mRecvBuffer;
+	CircularBuffer	mSendBuffer;
+	int				mSendPendingCount;
+
 public:
 					cSession();
 	virtual			~cSession();
@@ -24,12 +28,13 @@ public:
 	virtual void	OnRelease() {}
 
 	bool			PostRecv();
-	bool			PostSend();
-
+	bool			PostSend(const char* data, size_t len);
+	bool			FlushSend();
 	void			SendCompletion(DWORD transferred);
 	void			RecvCompletion(DWORD transferred);
 	void			DisconnectCompletion();
 
+	void			EchoBack();
 
 	void			Close();
 }SESSION, *LPSESSION;
