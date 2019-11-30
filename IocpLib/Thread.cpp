@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "Thread.h"
+#include "OverlappedIOContext.h"
 
 cThread::cThread(HANDLE hThread, HANDLE hCompletionPort)
 	:hThread(hThread), hIOCP(hCompletionPort), bFlag(true)
@@ -34,7 +35,7 @@ void cThread::OnIOCP()
 	int ret = GetQueuedCompletionStatus(hIOCP, &dwTransferred, (PULONG_PTR)&completionKey, &overlapped, INFINITE);
 	LPIOCONTEXT context = reinterpret_cast<LPIOCONTEXT>(overlapped);
 
-	LPSESSION remote = context ? context->pSession : nullptr;
+	LPSESSION remote = context ? context->owner : nullptr;
 
 	if (ret == 0 || dwTransferred == 0)
 	{

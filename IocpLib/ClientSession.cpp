@@ -1,5 +1,7 @@
 #include "pch.h"
 #include "ClientSession.h"
+#include "OverlappedIOContext.h"
+#include "CompletionPort.h"
 
 using namespace NETWORK;
 
@@ -32,12 +34,10 @@ void cClientSession::ResetSession()
 bool cClientSession::PostAccept()
 {
 	LPCONTEXT_ACCEPT acceptContext = NEW(CONTEXT_ACCEPT);
-	DWORD bytes = 0;
-	DWORD flags = 0;
 	acceptContext->buf.len = 0;
 	acceptContext->buf.buf = nullptr;
 
-	if (FALSE == NETWORK::AcceptEx(sock/*¸®½¼¼ÒÄÏ*/,sock,(LPOVERLAPPED)acceptContext,acceptContext->buf))
+	if (FALSE == NETWORK::AcceptEx(IOCP->GetListenSocket(),sock,(LPOVERLAPPED)acceptContext,acceptContext->buf))
 	{
 		if (WSAGetLastError() != WSA_IO_PENDING)
 		{
@@ -85,7 +85,7 @@ bool cClientSession::AcceptCompletion()
 			break;
 		}
 
-		HANDLE handle = CreateIoCompletionPort((HANDLE)sock, GIocpManager->GetComletionPort(), (ULONG_PTR)this, 0);
+		HANDLE handle = CreateIoCompletionPort((HANDLE)sock, IOCP->GetHandle(), (ULONG_PTR)this, 0);
 		if (handle != cCompletionPort::Instance()->GetHandle())
 		{
 			LOG("CreateIoCompletionPort error: %d", GetLastError());

@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "ServerSession.h"
+#include "OverlappedIOContext.h"
 
 using namespace NETWORK;
 cServerSession::cServerSession(const char* serverAddr) : 
@@ -48,8 +49,6 @@ bool cServerSession::ConnectCompletion()
 {
 	if (SOCKET_ERROR == setsockopt(sock, SOL_SOCKET, SO_UPDATE_CONNECT_CONTEXT, NULL, 0))
 	{
-		DWORD errCode = GetLastError();
-
 		return false;
 	}
 

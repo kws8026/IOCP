@@ -1,6 +1,4 @@
 #include "pch.h"
-#include "CompletionPort.h"
-#include <thread>
 
 cCompletionPort::cCompletionPort() : hIOCP(NULL), listenSocket(NULL)
 {
@@ -85,7 +83,7 @@ void cCompletionPort::StartAccept()
 	/// listen
 	if (SOCKET_ERROR == listen(listenSocket, SOMAXCONN))
 	{
-		ERROR("Fail to Listen");
+		LOG_ERROR("Fail to Listen");
 		return;
 	}
 

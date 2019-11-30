@@ -2,6 +2,11 @@
 
 #ifndef __THREAD_IOCP
 #define __THREAD_IOCP
+
+#define _WINSOCKAPI_
+#include <Windows.h>
+#include <thread>
+
 class cThread
 {
 	HANDLE	hThread;

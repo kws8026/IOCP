@@ -91,5 +91,11 @@
     <ClCompile Include="ServerSession.cpp">
       <Filter>세션 파일</Filter>
     </ClCompile>
+    <ClCompile Include="WinSock.cpp">
+      <Filter>유틸리티</Filter>
+    </ClCompile>
+    <ClCompile Include="OverlappedIOContext.cpp">
+      <Filter>세션 파일</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

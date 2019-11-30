@@ -5,19 +5,18 @@
 #include "FastSpinlock.h"
 
 template <typename T>
-class cSingleton : public ClassTypeLock<cSingleton>
+class cSingleton : public ClassTypeLock<T>
 {
 	static T* pInstance;
 public:
 	cSingleton() {}
 	virtual ~cSingleton() {
 		if (pInstance) {
-			delte pInstance;
-			pInstance = NULL;
+			delete pInstance;
+			pInstance = nullptr;
 		}
 	}
 	static T* Instance() {
-		LockGuard interlock;
 		if (pInstance == nullptr) {
 			pInstance = new T;
 		}
@@ -26,8 +25,11 @@ public:
 	static void Destroy() {
 		if (pInstance)
 			delete pInstance;
+		pInstance = nullptr;
 	}
 };
 
-template<typename T> T* cSingleton<T>::pInstance = nullptr;
+template<typename T> 
+T* cSingleton<T>::pInstance = nullptr;
+
 #endif 

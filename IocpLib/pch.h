@@ -9,13 +9,12 @@
 
 // 여기에 미리 컴파일하려는 헤더 추가
 #include "framework.h"
+
+#include "WinSock.h"
 #include "ClientSession.h"
 #include "CompletionPort.h"
 #include "Logger.h"
 #include "Session.h"
-#include "Thread.h"
 #include "Objectpool.h"
-#include "OverlappedIOContext.h"
-#include "Singleton.h"
 
 #endif //PCH_H

@@ -4,11 +4,9 @@
 #define __SESSION_IOCP
 
 #include <Ws2tcpip.h>
-#include "WinSock.h"
 #include "FastSpinlock.h"
-#include "OverlappedIOContext.h"
 
-#define MAX_BUFFER 1024
+#define MAX_OF_BUFFER 1024
 
 typedef class cSession
 {
@@ -16,7 +14,7 @@ protected:
 	SOCKET		sock;
 	SOCKADDR_IN addr;
 	SPINLOCK	lock;
-	char		buf[MAX_BUFFER];
+	char		buf[MAX_OF_BUFFER];
 public:
 					cSession();
 	virtual			~cSession();
@@ -35,6 +33,4 @@ public:
 
 	void			Close();
 }SESSION, *LPSESSION;
-
-
 #endif

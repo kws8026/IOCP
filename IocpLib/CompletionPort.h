@@ -3,6 +3,8 @@
 #ifndef __COMPLETIONPORTSERVER__IOCP
 #define __COMPLETIONPORTSERVER__IOCP
 
+#include <Windows.h>
+
 #include "Thread.h"
 #include "Singleton.h"
 
