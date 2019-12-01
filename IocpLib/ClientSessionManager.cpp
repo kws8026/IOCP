@@ -1,7 +1,9 @@
+#include "pch.h"
 #include "FastSpinlock.h"
 #include "ClientSession.h"
 #include "ClientSessionManager.h"
 #include "CompletionPort.h"
+#include "OverlappedIOContext.h"
 
 ClientSessionManager::~ClientSessionManager()
 {
@@ -15,15 +17,16 @@ void ClientSessionManager::PrepareClientSessions()
 {
 
 	m_MaxSessionCount = 1000;
-	cClientSession::CreatePool(1000);
+	cClientSession::CreatePool(m_MaxSessionCount);
 
 	for (int i = 0; i < m_MaxSessionCount; ++i)
 	{
 		cClientSession* client = NEW(cClientSession);
-
+		client->ResetSession();
 		mFreeSessionList.push_back(client);
 		m_SessionList.push_back(client);
 	}
+	CreateIOPool(100);
 
 	printf_s("[DEBUG][%s] m_MaxSessionCount: %d\n", __FUNCTION__, m_MaxSessionCount);
 }

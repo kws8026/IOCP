@@ -7,15 +7,15 @@
 #include <queue>
 #include <tchar.h>
 
-#include "CriticalSection.h"
+#include "FastSpinlock.h"
 #include "Singleton.h"
-
-#define MAX_BUFFER	512
+#include "CircularBuffer.h"
 
 typedef class cLogger : public cSingleton<cLogger>{
-	CS cs;
-	HANDLE hFile;
-	HANDLE hIOCP;
+	SPINLOCK		lock_log;
+	CircularBuffer	logBuffer;
+	HANDLE			hFile;
+	char*			tempBuffer;
 public:
 	cLogger();
 	~cLogger();

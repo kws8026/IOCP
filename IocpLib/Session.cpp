@@ -1,7 +1,8 @@
 #include "pch.h"
 #include "OverlappedIOContext.h"
 #include "Session.h"
-cSession::cSession() :  sock(INVALID_SOCKET)
+cSession::cSession(size_t recv, size_t send) :  
+	sock(INVALID_SOCKET), mRecvBuffer(recv), mSendBuffer(send)
 {
 	sock = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, WSA_FLAG_OVERLAPPED);
 	memset(&addr, 0, sizeof(SOCKADDR_IN));
@@ -12,21 +13,14 @@ cSession::~cSession()
 	closesocket(sock);
 }
 
-bool cSession::SetBuffer(size_t sendBufSize, size_t recvBufSize)
-{
-	mSendBuffer
-	mRecvBuffer
-	return false;
-}
-
-void cSession::OnReceive(size_t len)
+void cSession::OnReceive()
 {
 	EchoBack();
 }
 
 bool cSession::PostRecv()
 {
-	if (0 == mRecvBuffer.GetFreeSpaceSize()) {
+	if (mRecvBuffer.IsFull()) {
 		return false;
 	}
 
@@ -34,9 +28,9 @@ bool cSession::PostRecv()
 
 	DWORD recvbytes = 0;
 	DWORD flags = 0;
-	recvContext->buf.len = (ULONG)mRecvBuffer.GetFreeSpaceSize();
-	recvContext->buf.buf = mRecvBuffer.GetBuffer();
-
+	char* buffer = mRecvBuffer.pop();
+	recvContext->buf.len = strlen(buffer);
+	recvContext->buf.buf = buffer;
 
 	/// start real recv
 	if (SOCKET_ERROR == WSARecv(sock, &recvContext->buf, 1, &recvbytes, &flags, (LPWSAOVERLAPPED)recvContext, NULL))
@@ -52,22 +46,15 @@ bool cSession::PostRecv()
 	return true;
 }
 
-bool cSession::PostSend(const char* data, size_t len)
+bool cSession::PostSend(const char* data)
 {
 	FastSpinlockGuard criticalSection(lock_Session);
 
-	if (mSendBuffer.GetFreeSpaceSize() < len) {
-		return false;
-	}
 
 	/// flush later...
 	//LSendRequestSessionList->push_back(this);
 
-	char* destData = mSendBuffer.GetBuffer();
-
-	memcpy(destData, data, len);
-
-	mSendBuffer.Commit(len);
+	mSendBuffer.push(data);
 
 	return true;
 }
@@ -77,13 +64,12 @@ bool cSession::FlushSend()
 	FastSpinlockGuard criticalSection(lock_Session);
 
 	/// 보낼 데이터가 없는 경우
-	if (0 == mSendBuffer.GetContiguiousBytes())
+	if(mSendBuffer.IsEmpty())
 	{
 		/// 보낼 데이터도 없는 경우
 		if (0 == mSendPendingCount) {
 			return true;
 		}
-
 		return false;
 	}
 
@@ -97,8 +83,9 @@ bool cSession::FlushSend()
 
 	DWORD sendbytes = 0;
 	DWORD flags = 0;
-	sendContext->buf.len = (ULONG)mSendBuffer.GetContiguiousBytes();
-	sendContext->buf.buf = mSendBuffer.GetBufferStart();
+	char* buffer = mSendBuffer.pop();
+	sendContext->buf.len = strlen(buffer);
+	sendContext->buf.buf = buffer;
 
 	/// start async send
 	if (SOCKET_ERROR == WSASend(sock, &sendContext->buf, 1, &sendbytes, flags, (LPWSAOVERLAPPED)sendContext, NULL))
@@ -120,16 +107,12 @@ void cSession::SendCompletion(DWORD transferred)
 {
 	FastSpinlockGuard criticalSection(lock_Session);
 
-	mSendBuffer.Remove(transferred);
-
 	mSendPendingCount--;
 }
 
 void cSession::RecvCompletion(DWORD transferred)
 {
-	mRecvBuffer.Commit(transferred);
-
-	OnReceive(transferred);
+	OnReceive();
 }
 
 void cSession::DisconnectCompletion()
@@ -140,17 +123,13 @@ void cSession::DisconnectCompletion()
 
 void cSession::EchoBack()
 {
-	size_t len = mRecvBuffer.GetContiguiousBytes();
-
-	if (len == 0) {
+	if (mRecvBuffer.IsEmpty()) {
 		return;
 	}
 
-	if (false == PostSend(mRecvBuffer.GetBufferStart(), len)) {
+	if (false == PostSend(mRecvBuffer.pop())) {
 		return;
 	}
-
-	mRecvBuffer.Remove(len);
 }
 
 void cSession::Close()

@@ -7,8 +7,6 @@
 #include "FastSpinlock.h"
 #include "CircularBuffer.h"
 
-#define MAX_OF_BUFFER 1024
-
 typedef class cSession
 {
 protected:
@@ -20,15 +18,15 @@ protected:
 	int				mSendPendingCount;
 
 public:
-					cSession();
+					cSession(size_t recv, size_t send);
 	virtual			~cSession();
 
-	virtual void	OnReceive(size_t len);
+	virtual void	OnReceive();
 	virtual void	OnDisconnect() {}
 	virtual void	OnRelease() {}
 
 	bool			PostRecv();
-	bool			PostSend(const char* data, size_t len);
+	bool			PostSend(const char* data);
 	bool			FlushSend();
 	void			SendCompletion(DWORD transferred);
 	void			RecvCompletion(DWORD transferred);

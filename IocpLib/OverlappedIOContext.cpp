@@ -37,3 +37,13 @@ void DeleteIoContext(LPIOCONTEXT context)
 		LOG_ERROR("Invalide Commend");
 	}
 }
+
+void CreateIOPool(size_t size)
+{
+	CONTEXT_ACCEPT::CreatePool(size,true);
+	CONTEXT_RECV::CreatePool(size, true);
+	CONTEXT_PRERECV::CreatePool(size, true);
+	CONTEXT_SEND::CreatePool(size, true);
+	CONTEXT_CON::CreatePool(size, true);
+	CONTEXT_DISCON::CreatePool(size, true);
+}

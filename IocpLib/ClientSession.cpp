@@ -5,7 +5,9 @@
 
 using namespace NETWORK;
 
-cClientSession::cClientSession() : SESSION()
+#define SIZE_BUFFER_CLIENT 4
+
+cClientSession::cClientSession() : SESSION(SIZE_BUFFER_CLIENT, SIZE_BUFFER_CLIENT)
 {
 }
 
@@ -16,6 +18,7 @@ cClientSession::~cClientSession()
 void cClientSession::ResetSession()
 {
 	memset(&addr, 0, sizeof(SOCKADDR_IN));
+	sock = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, WSA_FLAG_OVERLAPPED);
 
 	LINGER lingerOption;
 	lingerOption.l_onoff = 1;
@@ -24,7 +27,7 @@ void cClientSession::ResetSession()
 	/// no TCP TIME_WAIT
 	if (SOCKET_ERROR == setsockopt(sock, SOL_SOCKET, SO_LINGER, (char*)&lingerOption, sizeof(LINGER)))
 	{
-		LOG("setsockopt linger option error: %d\n", GetLastError());
+		ERROR_CODE(GetLastError(),"setsockopt linger option error: %d\n");
 	}
 
 	sock = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, WSA_FLAG_OVERLAPPED);
@@ -41,7 +44,7 @@ bool cClientSession::PostAccept()
 		if (WSAGetLastError() != WSA_IO_PENDING)
 		{
 			DeleteIoContext(acceptContext);
-			LOG_ERROR("Fail to AcceptEx");
+			ERROR_CODE(WSAGetLastError(),"Fail to AcceptEx Error");
 			return false;
 		}
 	}

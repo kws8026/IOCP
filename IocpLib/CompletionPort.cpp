@@ -4,9 +4,6 @@
 cCompletionPort::cCompletionPort() : hIOCP(NULL), listenSocket(NULL)
 {
 	arrThreads = new cThread*[MAX_OF_THREADS];
-	ZeroMemory(
-		arrThreads,
-		sizeof(cThread*) * MAX_OF_THREADS);
 }
 
 

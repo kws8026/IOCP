@@ -3,8 +3,11 @@
 #include "OverlappedIOContext.h"
 
 using namespace NETWORK;
+
+#define SIZE_BUFFER_SERVER 8
+
 cServerSession::cServerSession(const char* serverAddr) : 
-	serverAddr(serverAddr),SESSION()
+	serverAddr(serverAddr),SESSION(SIZE_BUFFER_SERVER, SIZE_BUFFER_SERVER)
 {
 }
 

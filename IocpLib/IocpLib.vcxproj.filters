@@ -62,7 +62,7 @@
     <ClInclude Include="ClientSessionManager.h">
       <Filter>세션 파일</Filter>
     </ClInclude>
-    <ClInclude Include="CircularQueue.h">
+    <ClInclude Include="CircularBuffer.h">
       <Filter>유틸리티</Filter>
     </ClInclude>
   </ItemGroup>
@@ -105,9 +105,6 @@
     </ClCompile>
     <ClCompile Include="ClientSessionManager.cpp">
       <Filter>세션 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="CircularQueue.cpp">
-      <Filter>유틸리티</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

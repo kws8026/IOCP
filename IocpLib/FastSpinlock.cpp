@@ -1,7 +1,5 @@
 #include "pch.h"
 #include "FastSpinlock.h"
-#include <timeapi.h>
-
 cFastSpinlock::cFastSpinlock() : mLockFlag(0)
 {
 }
@@ -20,10 +18,7 @@ void cFastSpinlock::EnterLock()
 			return;
 		}
 
-		UINT uTimerRes = 1;
-		timeBeginPeriod(uTimerRes);
 		Sleep((DWORD)min(10, nloops));
-		timeEndPeriod(uTimerRes);
 	}
 
 }
