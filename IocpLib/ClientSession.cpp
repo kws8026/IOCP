@@ -36,6 +36,7 @@ void cClientSession::ResetSession()
 bool cClientSession::PostAccept()
 {
 	LPCONTEXT_ACCEPT acceptContext = NEW(CONTEXT_ACCEPT);
+	acceptContext->SetSession(this);
 	acceptContext->buf.len = 0;
 	acceptContext->buf.buf = nullptr;
 
@@ -56,9 +57,10 @@ bool cClientSession::AcceptCompletion()
 	bool bResult = true;
 	do
 	{
-		if (SOCKET_ERROR == setsockopt(sock, SOL_SOCKET, SO_UPDATE_ACCEPT_CONTEXT, (char*)cCompletionPort::Instance()->GetListenSocket(), sizeof(SOCKET)))
+		SOCKET listen = IOCP->GetListenSocket();
+		if (SOCKET_ERROR == setsockopt(sock, SOL_SOCKET, SO_UPDATE_ACCEPT_CONTEXT, (char*)listen, sizeof(SOCKET)))
 		{
-			LOG("SO_UPDATE_ACCEPT_CONTEXT error: %d", GetLastError());
+			ERROR_CODE(GetLastError(),"SO_UPDATE_ACCEPT_CONTEXT error");
 			bResult = false;
 			break;
 		}

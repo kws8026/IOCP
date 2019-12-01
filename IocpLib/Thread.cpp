@@ -44,22 +44,24 @@ void cThread::OnIOCP()
 		}
 	}
 
-	if (nullptr != remote) { return; };
-
 	bool bResult = false;
 
 	switch (context->cmd)
 	{
 	case IO_Connect:
+		dynamic_cast<cServerSession*>(remote)->ConnectCompletion();
 		break;
 
 	case IO_Accept:
+		dynamic_cast<cClientSession*>(remote)->AcceptCompletion();
 		break;
 
 	case IO_Send:
+		remote->SendCompletion(dwTransferred);
 		break;
 
 	case IO_Recv:
+		remote->RecvCompletion(dwTransferred);
 		break;
 
 	default:

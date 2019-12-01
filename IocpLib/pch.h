@@ -12,6 +12,7 @@
 
 #include "WinSock.h"
 #include "ClientSession.h"
+#include "ServerSession.h"
 #include "CompletionPort.h"
 #include "Logger.h"
 #include "Session.h"

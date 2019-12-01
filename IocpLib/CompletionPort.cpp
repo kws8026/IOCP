@@ -59,7 +59,6 @@ bool cCompletionPort::StartThreads()
 		unsigned __int64 threadIndex = i;
 		DWORD dwThreadId = 0;
 
-		/// 스레드ID는 DB 스레드 이후에 IO 스레드로..
 		HANDLE hThread = (HANDLE)_beginthreadex(NULL, 0, IoWorkerThread, (PVOID)threadIndex, CREATE_SUSPENDED, (unsigned int*)&dwThreadId);
 		if (hThread == NULL) {
 			return false;

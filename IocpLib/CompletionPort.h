@@ -8,7 +8,7 @@
 #include "Thread.h"
 #include "Singleton.h"
 
-static int MAX_OF_THREADS = 2; // 알아서 바꿀것
+static int MAX_OF_THREADS = 1; // 알아서 바꿀것
 
 class cCompletionPort: public cSingleton<cCompletionPort>
 {

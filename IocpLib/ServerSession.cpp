@@ -4,11 +4,12 @@
 
 using namespace NETWORK;
 
-#define SIZE_BUFFER_SERVER 8
+#define SIZE_BUFFER_SERVER 4
 
 cServerSession::cServerSession(const char* serverAddr) : 
 	serverAddr(serverAddr),SESSION(SIZE_BUFFER_SERVER, SIZE_BUFFER_SERVER)
 {
+	CreateIOPool(50);
 }
 
 cServerSession::~cServerSession()
@@ -17,13 +18,16 @@ cServerSession::~cServerSession()
 
 bool cServerSession::ConnectRequest()
 {
-	SOCKADDR_IN serverSockAddr;
-	ZeroMemory(&serverSockAddr, sizeof(serverSockAddr));
-	auto ret = inet_pton(AF_INET, serverAddr, (void*)&serverSockAddr.sin_addr.s_addr);
-	serverSockAddr.sin_port = htons(PORT);
+	sock = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, WSA_FLAG_OVERLAPPED);
 
-	if (SOCKET_ERROR == bind(sock, (SOCKADDR*)&serverSockAddr, sizeof(serverSockAddr)))
+	auto ret = inet_pton(AF_INET, serverAddr, (void*)&addr.sin_addr.s_addr);
+	addr.sin_port = htons(PORT);
+	addr.sin_family = AF_INET;
+	int opt = 1;
+	setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, (const char*)&opt, sizeof(int));
+	if (SOCKET_ERROR ==bind(sock,(SOCKADDR*) &addr, sizeof(addr)))
 	{
+		ERROR_CODE(WSAGetLastError(), "Fail to Bind");
 		return false;
 	}
 
@@ -35,16 +39,16 @@ bool cServerSession::ConnectRequest()
 
 
 	LPCONTEXT_CON context = NEW(CONTEXT_CON);
+	context->SetSession(this);
 
 	if (FALSE == ConnectEx(sock,addr,(LPWSAOVERLAPPED)context))
 	{
 		if (WSAGetLastError() != WSA_IO_PENDING)
 		{
 			DeleteIoContext(context);
-			LOG_ERROR("Fail to ConnectEx");
+			ERROR_CODE(WSAGetLastError(),"Fail to ConnectEx");
 		}
 	}
-
 	return true;
 }
 

@@ -16,7 +16,6 @@ class CircularBuffer
 			delete[] data;
 		}
 		void push(const char* object) { 
-			ZeroMemory(data, sizeof(data));
 			strcpy_s(data,MAX_OF_BUFFER,object);
 		}
 	};
@@ -30,7 +29,7 @@ public:
 		for (int i = 1; i < capacity; i++) {
 			buffer[i-1].next = &buffer[i];
 		}
-		buffer[capacity].next = &buffer[0];
+		buffer[capacity-1].next = &buffer[0];
 		front = buffer;
 		back = buffer;
 	}

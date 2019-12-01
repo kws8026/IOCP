@@ -4,7 +4,6 @@
 cSession::cSession(size_t recv, size_t send) :  
 	sock(INVALID_SOCKET), mRecvBuffer(recv), mSendBuffer(send)
 {
-	sock = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, WSA_FLAG_OVERLAPPED);
 	memset(&addr, 0, sizeof(SOCKADDR_IN));
 }
 
@@ -25,9 +24,11 @@ bool cSession::PostRecv()
 	}
 
 	CONTEXT_RECV* recvContext = NEW(CONTEXT_RECV);
+	recvContext->SetSession(this);
 
 	DWORD recvbytes = 0;
 	DWORD flags = 0;
+	mRecvBuffer.push("");
 	char* buffer = mRecvBuffer.pop();
 	recvContext->buf.len = strlen(buffer);
 	recvContext->buf.buf = buffer;
@@ -80,6 +81,7 @@ bool cSession::FlushSend()
 
 
 	CONTEXT_SEND* sendContext = NEW(CONTEXT_SEND);
+	sendContext->SetSession(this);
 
 	DWORD sendbytes = 0;
 	DWORD flags = 0;

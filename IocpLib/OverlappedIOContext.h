@@ -25,6 +25,7 @@ typedef struct stOverlappedIOContext {
 		ZeroMemory(&overlapped, sizeof(WSAOVERLAPPED));
 		ZeroMemory(&buf, sizeof(WSABUF));
 	}
+	void SetSession(LPSESSION other) {owner = other;}
 }IOCONTEXT,*LPIOCONTEXT;
 
 typedef struct stSendContext	

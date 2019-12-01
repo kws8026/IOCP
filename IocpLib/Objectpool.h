@@ -87,7 +87,6 @@ public:
 			}
 		}
 		auto pReturn = objects[size++];
-		ZeroMemory(pReturn,sizeof(Object));
 		return pReturn;
 	};
 	static bool		Release(Object* object) {

@@ -5,17 +5,20 @@
 #pragma comment( lib, "ws2_32.lib")
 
 int main() {
-	cServerSession session("192.0.0.1");
 	if (IOCP->Initialize() == false) {
 		return -1;
 	}
 	if (IOCP->StartThreads() == false) {
 		return -1;
 	}
-	session.ConnectRequest();
-	char flag = 'o';
-	while (flag != 'x') {
-		flag = getchar();
+	cServerSession session("127.0.0.1");
+	if (session.ConnectRequest() == false) {
+		return -1;
+	}
+	char buf[256];
+	while (true) {
+		std::cin >> buf;
+		session.PostSend(buf);
 	}
 	IOCP->Close();
 	session.Close();

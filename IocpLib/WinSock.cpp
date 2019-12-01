@@ -77,6 +77,6 @@ BOOL NETWORK::ConnectEx(SOCKET connect, SOCKADDR_IN addr, LPOVERLAPPED overlappe
 			return false;
 		}
 	}
-	return  pConnectEx(connect, (sockaddr*) & (addr), sizeof(addr), NULL, 0, &ReturnByte, overlapped);
+	return  pConnectEx(connect, (sockaddr*) & (addr), sizeof(SOCKADDR_IN), NULL, 0, &ReturnByte, overlapped);
 
 }
