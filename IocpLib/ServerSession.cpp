@@ -10,15 +10,33 @@ cServerSession::cServerSession(const char* serverAddr) :
 	serverAddr(serverAddr),SESSION(SIZE_BUFFER_SERVER, SIZE_BUFFER_SERVER)
 {
 	CreateIOPool(50);
+	sock = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, WSA_FLAG_OVERLAPPED);
 }
 
 cServerSession::~cServerSession()
 {
 }
 
+bool cServerSession::Connect()
+{
+	auto ret = inet_pton(AF_INET, serverAddr, (void*)&addr.sin_addr.s_addr);
+	addr.sin_port = htons(PORT);
+	addr.sin_family = AF_INET;
+
+	if(INVALID_SOCKET == connect(sock, (SOCKADDR*)&addr, sizeof(addr))){
+		return false;
+	}
+
+	HANDLE handle = CreateIoCompletionPort((HANDLE)sock, IOCP->GetHandle(), (ULONG_PTR)this, 0);
+	if (handle != IOCP->GetHandle())
+	{
+		return false;
+	}
+	return true;
+}
+
 bool cServerSession::ConnectRequest()
 {
-	sock = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, WSA_FLAG_OVERLAPPED);
 
 	auto ret = inet_pton(AF_INET, serverAddr, (void*)&addr.sin_addr.s_addr);
 	addr.sin_port = htons(PORT);

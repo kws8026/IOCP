@@ -2,6 +2,7 @@
 #include "ClientSession.h"
 #include "OverlappedIOContext.h"
 #include "CompletionPort.h"
+#include <string>
 
 using namespace NETWORK;
 
@@ -58,7 +59,7 @@ bool cClientSession::AcceptCompletion()
 	do
 	{
 		SOCKET listen = IOCP->GetListenSocket();
-		if (SOCKET_ERROR == setsockopt(sock, SOL_SOCKET, SO_UPDATE_ACCEPT_CONTEXT, (char*)listen, sizeof(SOCKET)))
+		if (SOCKET_ERROR == setsockopt(sock, SOL_SOCKET, SO_UPDATE_ACCEPT_CONTEXT, (char*)&listen, sizeof(SOCKET)))
 		{
 			ERROR_CODE(GetLastError(),"SO_UPDATE_ACCEPT_CONTEXT error");
 			bResult = false;
@@ -108,6 +109,8 @@ bool cClientSession::AcceptCompletion()
 
 	char clientIP[32] = { 0, };
 	inet_ntop(AF_INET, &(addr.sin_addr), clientIP, 32 - 1);
+	std::string str;
+
 	LOG("Client Connected: IP=%s, PORT=%d", clientIP, ntohs(addr.sin_port));
 
 	if (false == PostRecv())

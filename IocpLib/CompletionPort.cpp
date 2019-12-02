@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "ClientSessionManager.h"
+#include <process.h>
 
 cCompletionPort::cCompletionPort() : hIOCP(NULL), listenSocket(NULL)
 {

@@ -12,13 +12,15 @@ int main() {
 		return -1;
 	}
 	cServerSession session("127.0.0.1");
-	if (session.ConnectRequest() == false) {
+	if (session.Connect() == false) {
 		return -1;
 	}
+	session.ConnectCompletion();
 	char buf[256];
 	while (true) {
 		std::cin >> buf;
 		session.PostSend(buf);
+		session.FlushSend();
 	}
 	IOCP->Close();
 	session.Close();

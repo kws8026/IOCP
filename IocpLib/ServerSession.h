@@ -12,6 +12,8 @@ public:
 	cServerSession(const char* serverAddr);
 	virtual ~cServerSession();
 
+	bool Connect();
+
 	bool ConnectRequest();
 	bool ConnectCompletion();
 };

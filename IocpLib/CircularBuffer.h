@@ -46,8 +46,8 @@ public:
 	Node*	push(const char* object) {
 		if (size != 0 && front == back)
 			return nullptr;
-		back = back->next;
 		back->push(object);
+		back = back->next;
 		size++;
 		return back;
 	}
