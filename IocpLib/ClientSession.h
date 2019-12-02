@@ -9,7 +9,7 @@ class ClientSessionManager;
 
 class cClientSession : public SESSION, public cObjectPool<cClientSession>
 {
-
+	SPINLOCK lock_client;
 public:
 				cClientSession();
 	virtual		~cClientSession();
@@ -19,11 +19,11 @@ public:
 	bool		PostAccept();
 	bool		AcceptCompletion();
 
-	virtual void OnReceive(size_t len) {}
-	virtual void OnSend(size_t len) {}
+	virtual void OnReceive();
+	virtual void OnSend();
 	virtual void OnDisconnect();
 	virtual void OnRelease();
-
+	
 	friend class ClientSessionManager;
 };
 

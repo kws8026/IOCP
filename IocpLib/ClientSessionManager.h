@@ -21,9 +21,8 @@ public:
 
 	void ReturnClientSession(cClientSession* client);
 
-
 	int MaxClientSessionCount() { return m_MaxSessionCount; }
-
+	int GetClientsConnectedSize() { return m_SessionList.size(); }
 	cClientSession* GetClientSession(const int index);
 
 

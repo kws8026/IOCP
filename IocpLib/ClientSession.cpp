@@ -28,7 +28,7 @@ void cClientSession::ResetSession()
 	/// no TCP TIME_WAIT
 	if (SOCKET_ERROR == setsockopt(sock, SOL_SOCKET, SO_LINGER, (char*)&lingerOption, sizeof(LINGER)))
 	{
-		ERROR_CODE(GetLastError(),"setsockopt linger option error: %d\n");
+		ERROR_CODE(GetLastError(),"setsockopt linger option");
 	}
 
 	sock = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, WSA_FLAG_OVERLAPPED);
@@ -69,7 +69,7 @@ bool cClientSession::AcceptCompletion()
 		int opt = 1;
 		if (SOCKET_ERROR == setsockopt(sock, IPPROTO_TCP, TCP_NODELAY, (const char*)&opt, sizeof(int)))
 		{
-			LOG("TCP_NODELAY error: %d", GetLastError());
+			ERROR_CODE(GetLastError(), "TCP_NODELAY error");
 			bResult = false;
 			break;
 		}
@@ -77,7 +77,7 @@ bool cClientSession::AcceptCompletion()
 		opt = 0;
 		if (SOCKET_ERROR == setsockopt(sock, SOL_SOCKET, SO_RCVBUF, (const char*)&opt, sizeof(int)))
 		{
-			LOG("SO_RCVBUF change error: %d", GetLastError());
+			ERROR_CODE(GetLastError(), "SO_RCVBUF change error");
 			bResult = false;
 			break;
 		}
@@ -93,7 +93,7 @@ bool cClientSession::AcceptCompletion()
 		HANDLE handle = CreateIoCompletionPort((HANDLE)sock, IOCP->GetHandle(), (ULONG_PTR)this, 0);
 		if (handle != cCompletionPort::Instance()->GetHandle())
 		{
-			LOG("CreateIoCompletionPort error: %d", GetLastError());
+			ERROR_CODE(GetLastError(), "CreateIoCompletionPort error");
 			bResult = false;
 			break;
 		}
@@ -103,7 +103,7 @@ bool cClientSession::AcceptCompletion()
 
 	if (!bResult)
 	{
-		LOG("[%s] CreateIoCompletionPort error: %d", __FUNCTION__, GetLastError());
+		ERROR_CODE(GetLastError(),"CreateIoCompletionPort error");
 		return bResult;
 	}
 
@@ -120,6 +120,19 @@ bool cClientSession::AcceptCompletion()
 	}
 
 	return true;
+}
+
+void cClientSession::OnReceive()
+{
+	FastSpinlockGuard lock(lock_client);
+	mRecvBuffer.Commit();
+	if(false == PostSend(mRecvBuffer.pop())){
+		return;
+	}
+}
+
+void cClientSession::OnSend()
+{
 }
 
 void cClientSession::OnDisconnect()

@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "ClientSessionManager.h"
 #include "Thread.h"
 #include "OverlappedIOContext.h"
 
@@ -16,6 +17,7 @@ DWORD cThread::Run()
 {
 	while (bFlag) {
 		OnIOCP();
+		OnSend();
 	}
 	return 0;
 }
@@ -44,7 +46,7 @@ void cThread::OnIOCP()
 		}
 	}
 
-	bool bResult = false;
+	bool bResult = true;
 
 	switch (context->cmd)
 	{
@@ -57,18 +59,38 @@ void cThread::OnIOCP()
 		break;
 
 	case IO_Send:
-		remote->SendCompletion(dwTransferred);
+		remote->SendCompletion();
 		break;
 
 	case IO_Recv:
-		remote->RecvCompletion(dwTransferred);
+		LOG("RECV : %s",context->buf.buf);
+		remote->RecvCompletion();
+		bResult = remote->PostRecv();
 		break;
 
 	default:
 		break;
 	}
+
+	DeleteIoContext(context);
+
+	if (!bResult)
+	{
+		/// connection closing
+		remote->DisconnectCompletion();
+	}
 }
 
 void cThread::OnSend()
 {
+	for (int i = 0; i < CLIENTS->GetClientsConnectedSize(); ++i)
+	{
+		auto session = CLIENTS->GetClientSession(i);
+
+		if (session == nullptr) {
+			break;
+		}
+
+		session->FlushSend();
+	}
 }

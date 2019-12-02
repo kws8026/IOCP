@@ -9,7 +9,6 @@ using namespace NETWORK;
 cServerSession::cServerSession(const char* serverAddr) : 
 	serverAddr(serverAddr),SESSION(SIZE_BUFFER_SERVER, SIZE_BUFFER_SERVER)
 {
-	CreateIOPool(50);
 	sock = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, WSA_FLAG_OVERLAPPED);
 }
 

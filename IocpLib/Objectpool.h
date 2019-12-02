@@ -27,6 +27,7 @@ class cObjectPool
 		}
 		ZeroMemory(temp, sizeof(Object*) * expansion);
 		for (int i = 0; i < capacity; i++) {
+			temp[i] = new Object;
 			temp[i] = objects[i];						// 기존 오브젝트들의 정보를 복사
 		}
 		for (int i = capacity; i < expansion; i++) {	// 확장된 캐퍼시티만큼 오브젝트를 생성

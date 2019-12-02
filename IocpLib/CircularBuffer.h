@@ -16,6 +16,7 @@ class CircularBuffer
 			delete[] data;
 		}
 		void push(const char* object) { 
+			ZeroMemory(data,sizeof(data));
 			strcpy_s(data,MAX_OF_BUFFER,object);
 		}
 	};
@@ -42,7 +43,17 @@ public:
 	bool	IsEmpty() {
 		return size == 0;
 	}
-
+	bool	Commit() {
+		if (!IsFull()) {
+			size++;
+			return true;
+		}
+		return false;
+	}
+	char*	Front() {
+		ZeroMemory(front->data, sizeof(front->data));
+		return front->data;
+	}
 	Node*	push(const char* object) {
 		if (size != 0 && front == back)
 			return nullptr;

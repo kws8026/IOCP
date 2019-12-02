@@ -1,29 +1,32 @@
-#include <iostream>
+#include "DummyClients.h"
 #include "CompletionPort.h"
-#include "ServerSession.h"
-
+#include <iostream>
 #pragma comment( lib, "ws2_32.lib")
 
 int main() {
 	if (IOCP->Initialize() == false) {
 		return -1;
 	}
-	if (IOCP->StartThreads() == false) {
+	if (IOCP->StartThreads(6) == false) {
 		return -1;
 	}
-	cServerSession session("127.0.0.1");
-	if (session.Connect() == false) {
-		return -1;
-	}
-	session.ConnectCompletion();
+	DummyClients clients("127.0.0.1");
+
 	char buf[256];
+	int  size;
+	std::cout << "input num of dummy : ";
+	std::cin  >> size;
+	if (clients.CreateDummy(size) == false) {
+		return -1;
+	}
+
 	while (true) {
 		std::cin >> buf;
-		session.PostSend(buf);
-		session.FlushSend();
+		clients.Send(buf);
 	}
+
 	IOCP->Close();
-	session.Close();
+	clients.Close();
 
 	return 0;
 }

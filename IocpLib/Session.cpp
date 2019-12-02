@@ -12,11 +12,6 @@ cSession::~cSession()
 	closesocket(sock);
 }
 
-void cSession::OnReceive()
-{
-	EchoBack();
-}
-
 bool cSession::PostRecv()
 {
 	if (mRecvBuffer.IsFull()) {
@@ -28,9 +23,8 @@ bool cSession::PostRecv()
 
 	DWORD recvbytes = 0;
 	DWORD flags = 0;
-	mRecvBuffer.push("");
-	char* buffer = mRecvBuffer.pop();
-	recvContext->buf.len = strlen(buffer);
+	char* buffer = mRecvBuffer.Front();
+	recvContext->buf.len = MAX_OF_BUFFER;
 	recvContext->buf.buf = buffer;
 
 	/// start real recv
@@ -88,8 +82,8 @@ bool cSession::FlushSend()
 	char* buffer = mSendBuffer.pop();
 	sendContext->buf.len = strlen(buffer);
 	sendContext->buf.buf = buffer;
+	LOG("SEND : %s", buffer);
 
-	/// start async send
 	if (SOCKET_ERROR == WSASend(sock, &sendContext->buf, 1, &sendbytes, flags, (LPWSAOVERLAPPED)sendContext, NULL))
 	{
 		if (WSAGetLastError() != WSA_IO_PENDING)
@@ -97,7 +91,6 @@ bool cSession::FlushSend()
 			DeleteIoContext(sendContext);
 			return true;
 		}
-
 	}
 
 	mSendPendingCount++;
@@ -105,14 +98,14 @@ bool cSession::FlushSend()
 	return mSendPendingCount == 1;
 }
 
-void cSession::SendCompletion(DWORD transferred)
+void cSession::SendCompletion()
 {
 	FastSpinlockGuard criticalSection(lock_Session);
 
 	mSendPendingCount--;
 }
 
-void cSession::RecvCompletion(DWORD transferred)
+void cSession::RecvCompletion()
 {
 	OnReceive();
 }
@@ -121,17 +114,6 @@ void cSession::DisconnectCompletion()
 {
 	closesocket(sock);
 	OnRelease();
-}
-
-void cSession::EchoBack()
-{
-	if (mRecvBuffer.IsEmpty()) {
-		return;
-	}
-
-	if (false == PostSend(mRecvBuffer.pop())) {
-		return;
-	}
 }
 
 void cSession::Close()

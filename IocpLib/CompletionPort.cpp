@@ -2,9 +2,8 @@
 #include "ClientSessionManager.h"
 #include <process.h>
 
-cCompletionPort::cCompletionPort() : hIOCP(NULL), listenSocket(NULL)
+cCompletionPort::cCompletionPort() : MAX_OF_THREADS(0), hIOCP(NULL), listenSocket(NULL)
 {
-	arrThreads = new cThread*[MAX_OF_THREADS];
 }
 
 
@@ -53,8 +52,10 @@ void cCompletionPort::Close()
 {
 }
 
-bool cCompletionPort::StartThreads()
+bool cCompletionPort::StartThreads(size_t threads)
 {
+	MAX_OF_THREADS = threads;
+	arrThreads = new cThread * [MAX_OF_THREADS];
 	for (int i = 0; i < MAX_OF_THREADS; ++i)
 	{
 		unsigned __int64 threadIndex = i;

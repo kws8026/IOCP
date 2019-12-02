@@ -28,7 +28,7 @@ void ClientSessionManager::PrepareClientSessions()
 	}
 	CreateIOPool(100);
 
-	printf_s("[DEBUG][%s] m_MaxSessionCount: %d\n", __FUNCTION__, m_MaxSessionCount);
+	LOG("MaxSessionCount: %d", m_MaxSessionCount);
 }
 
 void ClientSessionManager::ReturnClientSession(cClientSession* client)

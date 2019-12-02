@@ -8,14 +8,13 @@
 #include "Thread.h"
 #include "Singleton.h"
 
-static int MAX_OF_THREADS = 1; // 알아서 바꿀것
 
 class cCompletionPort: public cSingleton<cCompletionPort>
 {
 	HANDLE		hIOCP;
 	SOCKET		listenSocket;
 	cThread**	arrThreads;
-
+	size_t		MAX_OF_THREADS;
 	static unsigned int WINAPI IoWorkerThread(LPVOID lpParam);
 public:
 	cCompletionPort();
@@ -24,7 +23,7 @@ public:
 	bool Initialize();
 	void Close();
 
-	bool StartThreads();
+	bool StartThreads(size_t threads =2);
 	void StartAccept();
 
 	SOCKET GetListenSocket() { return listenSocket; };

@@ -21,18 +21,17 @@ public:
 					cSession(size_t recv, size_t send);
 	virtual			~cSession();
 
-	virtual void	OnReceive();
+	virtual void	OnReceive() = 0;
+	virtual void	OnSend() = 0;
 	virtual void	OnDisconnect() {}
 	virtual void	OnRelease() {}
 
 	bool			PostRecv();
 	bool			PostSend(const char* data);
 	bool			FlushSend();
-	void			SendCompletion(DWORD transferred);
-	void			RecvCompletion(DWORD transferred);
+	void			SendCompletion();
+	void			RecvCompletion();
 	void			DisconnectCompletion();
-
-	void			EchoBack();
 
 	void			Close();
 }SESSION, *LPSESSION;
