@@ -2,7 +2,7 @@
 #ifndef __CIRCULARBUFFER_UTIL
 #define __CIRCULARBUFFER_UTIL
 
-#define MAX_OF_BUFFER 256
+#define MAX_OF_BUFFER 2000
 
 class CircularBuffer
 {
