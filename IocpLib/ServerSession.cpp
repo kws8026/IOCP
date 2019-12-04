@@ -1,7 +1,8 @@
 #include "pch.h"
+#include "DummyClients.h"
 #include "ServerSession.h"
 #include "OverlappedIOContext.h"
-
+#include "Packet.h"
 using namespace NETWORK;
 
 #define SIZE_BUFFER_SERVER 4
@@ -14,6 +15,16 @@ cServerSession::cServerSession(const char* serverAddr) :
 
 cServerSession::~cServerSession()
 {
+}
+
+void cServerSession::OnReceive()
+{
+	stPacket* packet = LPMNGPACKET->Deserialization(bufRecv.pop());
+	if (packet == nullptr) {
+		return;
+	}
+	LOG("RECV : %s",static_cast<PACKETC_CHAT*>(packet)->chat);
+	cPacketManager::DeletePacket(packet);
 }
 
 bool cServerSession::Connect()

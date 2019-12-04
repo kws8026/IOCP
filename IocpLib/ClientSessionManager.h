@@ -5,14 +5,26 @@
 
 #include "FastSpinlock.h"
 #include "Singleton.h"
+#include "Packet.h"
 
-class cClientSession;
+class cClientSession; 
 
 class ClientSessionManager : public cSingleton<ClientSessionManager>
 {
+	typedef std::list<cClientSession*> ClientList;
+	ClientList		mFreeSessionList;
+	std::vector<cClientSession*> m_SessionList;
+
+	cPacketManager	mng_packet;
+
+	cFastSpinlock	lock_mngClinet;
+
+	uint64_t		mCurrentIssueCount;
+	uint64_t		mCurrentReturnCount;
+	int				m_MaxSessionCount;
+
 public:
-	ClientSessionManager() : mCurrentIssueCount(0), mCurrentReturnCount(0)
-	{}
+	ClientSessionManager() : mCurrentIssueCount(0), mCurrentReturnCount(0), m_MaxSessionCount(0) {};
 
 	~ClientSessionManager();
 
@@ -24,20 +36,8 @@ public:
 	int MaxClientSessionCount() { return m_MaxSessionCount; }
 	int GetClientsConnectedSize() { return m_SessionList.size(); }
 	cClientSession* GetClientSession(const int index);
-
-
-private:
-	typedef std::list<cClientSession*> ClientList;
-	ClientList	mFreeSessionList;
-
-	cFastSpinlock mLock;
-
-	uint64_t mCurrentIssueCount;
-	uint64_t mCurrentReturnCount;
-
-	int m_MaxSessionCount = 0;
-
-	std::vector<cClientSession*> m_SessionList;
+	cPacketManager* GetPacketManager() { return &mng_packet; }
 };
 
 #define CLIENTS ClientSessionManager::Instance()
+#define LPMNGPACKET CLIENTS->GetPacketManager()

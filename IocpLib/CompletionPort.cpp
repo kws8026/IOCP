@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "ClientSessionManager.h"
+
 #include <process.h>
 
 cCompletionPort::cCompletionPort() : MAX_OF_THREADS(0), hIOCP(NULL), listenSocket(NULL)
@@ -45,6 +46,7 @@ bool cCompletionPort::Initialize()
 	}
 
 	LOG("Server Initialize Successfully");
+
 	return true;
 }
 

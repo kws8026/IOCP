@@ -2,7 +2,7 @@
 #include "OverlappedIOContext.h"
 #include "Session.h"
 cSession::cSession(size_t recv, size_t send) :  
-	sock(INVALID_SOCKET), mRecvBuffer(recv), mSendBuffer(send)
+	sock(INVALID_SOCKET), bufRecv(recv), bufSend(send)
 {
 	memset(&addr, 0, sizeof(SOCKADDR_IN));
 }
@@ -14,7 +14,9 @@ cSession::~cSession()
 
 bool cSession::PostRecv()
 {
-	if (mRecvBuffer.IsFull()) {
+	FastSpinlockGuard criticalSection(lock_recv);
+
+	if (bufRecv.IsFull()) {
 		return false;
 	}
 
@@ -23,7 +25,7 @@ bool cSession::PostRecv()
 
 	DWORD recvbytes = 0;
 	DWORD flags = 0;
-	char* buffer = mRecvBuffer.Front();
+	char* buffer = bufRecv.Front();
 	recvContext->buf.len = MAX_OF_BUFFER;
 	recvContext->buf.buf = buffer;
 
@@ -45,11 +47,7 @@ bool cSession::PostSend(const char* data)
 {
 	FastSpinlockGuard criticalSection(lock_Session);
 
-
-	/// flush later...
-	//LSendRequestSessionList->push_back(this);
-
-	mSendBuffer.push(data);
+	bufSend.push(data);
 
 	return true;
 }
@@ -59,17 +57,17 @@ bool cSession::FlushSend()
 	FastSpinlockGuard criticalSection(lock_Session);
 
 	/// 보낼 데이터가 없는 경우
-	if(mSendBuffer.IsEmpty())
+	if(bufSend.IsEmpty())
 	{
 		/// 보낼 데이터도 없는 경우
-		if (0 == mSendPendingCount) {
+		if (0 == countSendpadding) {
 			return true;
 		}
 		return false;
 	}
 
 	/// 이전의 send가 완료 안된 경우
-	if (mSendPendingCount > 0) {
+	if (countSendpadding > 0) {
 		return false;
 	}
 
@@ -79,34 +77,38 @@ bool cSession::FlushSend()
 
 	DWORD sendbytes = 0;
 	DWORD flags = 0;
-	char* buffer = mSendBuffer.pop();
-	sendContext->buf.len = strlen(buffer);
+	char* buffer = bufSend.pop();
+	LPWORD len = (LPWORD)&buffer[1];
+	sendContext->buf.len = *len;
 	sendContext->buf.buf = buffer;
-	LOG("SEND : %s", buffer);
+	LOG("SEND : %s", buffer+3);
 
 	if (SOCKET_ERROR == WSASend(sock, &sendContext->buf, 1, &sendbytes, flags, (LPWSAOVERLAPPED)sendContext, NULL))
 	{
 		if (WSAGetLastError() != WSA_IO_PENDING)
 		{
+			ERROR_CODE(WSAGetLastError(),"Fail to Send");
 			DeleteIoContext(sendContext);
 			return true;
 		}
 	}
 
-	mSendPendingCount++;
-
-	return mSendPendingCount == 1;
+	countSendpadding++;
+	sendbytes;
+	return countSendpadding == 1;
 }
 
 void cSession::SendCompletion()
 {
 	FastSpinlockGuard criticalSection(lock_Session);
 
-	mSendPendingCount--;
+	countSendpadding--;
 }
 
 void cSession::RecvCompletion()
 {
+	FastSpinlockGuard criticalSection(lock_recv);
+	bufRecv.Commit();
 	OnReceive();
 }
 

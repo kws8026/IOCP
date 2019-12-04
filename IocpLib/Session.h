@@ -10,12 +10,13 @@
 typedef class cSession
 {
 protected:
-	SOCKET		sock;
-	SOCKADDR_IN addr;
-	SPINLOCK	lock_Session;
-	CircularBuffer	mRecvBuffer;
-	CircularBuffer	mSendBuffer;
-	int				mSendPendingCount;
+	SOCKET			sock;
+	SOCKADDR_IN		addr;
+	SPINLOCK		lock_Session;
+	SPINLOCK		lock_recv;
+	CircularBuffer	bufRecv;
+	CircularBuffer	bufSend;
+	int				countSendpadding;
 
 public:
 					cSession(size_t recv, size_t send);

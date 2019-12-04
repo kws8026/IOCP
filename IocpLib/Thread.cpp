@@ -63,7 +63,6 @@ void cThread::OnIOCP()
 		break;
 
 	case IO_Recv:
-		LOG("RECV : %s",context->buf.buf);
 		remote->RecvCompletion();
 		bResult = remote->PostRecv();
 		break;

@@ -12,12 +12,12 @@ public:
 	cServerSession(const char* serverAddr);
 	virtual ~cServerSession();
 
-	virtual void OnReceive() {};
-	virtual void OnSend() {};
+	virtual void	OnSend() {};
+	virtual void	OnReceive();
 
-	bool Connect();
+	bool	Connect();
 
-	bool ConnectRequest();
-	bool ConnectCompletion();
+	bool	ConnectRequest();
+	bool	ConnectCompletion();
 };
 #endif

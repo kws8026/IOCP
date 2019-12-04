@@ -17,5 +17,6 @@
 #include "Logger.h"
 #include "Session.h"
 #include "Objectpool.h"
+#include "Packet.h"
 
 #endif //PCH_H

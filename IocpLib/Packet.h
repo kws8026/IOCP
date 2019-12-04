@@ -6,9 +6,9 @@
 #include "FastSpinlock.h"
 
 #define MAX_OF_OBJECTS	256
-#define END_MARK		227
+#define END_MARK		'#'
 
-static enum HeaderType {
+enum HeaderType {
 	ServerDefault = 0,
 	ServerLoginCompletion = 37,		// 로그인결과
 	ServerObjects,					// 그리드안의 오브젝트 정보
@@ -16,18 +16,19 @@ static enum HeaderType {
 	ClientLogin = 117,
 	ClientObjectsCompletion,
 	ClientRequestState,
-	ClientState
+	ClientState,
+	ClientChat
 };
-
+#pragma pack(push, 1)
 typedef struct stPacket {
-	WORD			size;
 	unsigned char	type;
-	stPacket(char type = 0) : type(type) {};
+	WORD			size;
+	stPacket(char type = 0, WORD size = 0) : type(type), size(size){};
 }HEAD, *LPHEAD;
 
 typedef struct stServerLogin : public stPacket, cObjectPool<stServerLogin> {
 	bool bResult;
-	stServerLogin() :stPacket(ServerLoginCompletion) {};
+	stServerLogin() :bResult(false),stPacket(ServerLoginCompletion) {};
 }PACKETS_LOGIN;
 typedef struct stServerObjects : public stPacket, cObjectPool<stServerObjects> {
 	WORD Object[MAX_OF_OBJECTS];
@@ -57,18 +58,24 @@ typedef struct stClientState : public stPacket, cObjectPool<stClientState> {
 	float	y;
 	stClientState() :stPacket(ClientState) {};
 }PACKETC_STATE;
-
+typedef  struct stClientChat : public stPacket, cObjectPool<stClientChat> {
+	char chat[256] = "";
+	stClientChat() :stPacket(ClientChat) {};
+}PACKETC_CHAT;
+#pragma pack(pop)
 class cPacketManager
 {
-	SPINLOCK	lock_packet;
-	size_t		packetSize[256];
+	SPINLOCK		lock_packet;
+	static size_t	packetSize[256];
 public:
 	cPacketManager();
 	~cPacketManager();
-	bool		Initialize(size_t opSize);
-	void		Serialization(char* des, stPacket* pPacket);
-	stPacket*	Deserialization(const char* buffer);
+	static bool			Initialize(size_t opSize);
+
+	void				Serialization(char* des, stPacket* pPacket);
+	stPacket*			Deserialization(const char* buffer);
+
+	static void			DeletePacket(stPacket* pPacket);
 };
 
-static void DeletePacket(stPacket* pPacket);
 #endif // !1

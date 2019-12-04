@@ -9,7 +9,7 @@ class ClientSessionManager;
 
 class cClientSession : public SESSION, public cObjectPool<cClientSession>
 {
-	SPINLOCK lock_client;
+	SPINLOCK		lock_client;
 public:
 				cClientSession();
 	virtual		~cClientSession();

@@ -17,7 +17,7 @@ class CircularBuffer
 		}
 		void push(const char* object) { 
 			ZeroMemory(data,sizeof(data));
-			strcpy_s(data,MAX_OF_BUFFER,object);
+			memcpy(data,object, MAX_OF_BUFFER);
 		}
 	};
 	Node*	buffer;

@@ -1,16 +1,11 @@
 #include "pch.h"
 #include "Packet.h"
+#include "Logger.h"
+
+size_t cPacketManager::packetSize[256] = {0,};
 
 cPacketManager::cPacketManager()
 {
-	memset(packetSize,0,256);
-	packetSize[ServerLoginCompletion] = sizeof(PACKETS_LOGIN);
-	packetSize[ServerObjects] = sizeof(PACKETS_OBJECT);
-	packetSize[ServerState] = sizeof(PACKETS_STATE);
-	packetSize[ClientLogin] = sizeof(PACKETC_LOGIN);
-	packetSize[ClientObjectsCompletion] = sizeof(PACKETC_OBJECT);
-	packetSize[ClientRequestState] = sizeof(PACKETC_REQSTATE);
-	packetSize[ClientState] = sizeof(PACKETC_STATE);
 }
 
 cPacketManager::~cPacketManager()
@@ -19,26 +14,38 @@ cPacketManager::~cPacketManager()
 
 bool cPacketManager::Initialize(size_t opSize = 20)
 {
+	memset(packetSize, 0, 256);
+	packetSize[ServerLoginCompletion] = sizeof(PACKETS_LOGIN) + 1;
+	packetSize[ServerObjects] = sizeof(PACKETS_OBJECT) + 1;
+	packetSize[ServerState] = sizeof(PACKETS_STATE) + 1;
+	packetSize[ClientLogin] = sizeof(PACKETC_LOGIN) + 1;
+	packetSize[ClientObjectsCompletion] = sizeof(PACKETC_OBJECT) + 1;
+	packetSize[ClientRequestState] = sizeof(PACKETC_REQSTATE) + 1;
+	packetSize[ClientState] = sizeof(PACKETC_STATE) + 1;
+	packetSize[ClientChat] = sizeof(PACKETC_CHAT) + 1;
 	// Packet ObjectPool Create by Size
-	if (false == stServerLogin::CreatePool(opSize, true)) {
+	if (false == PACKETS_LOGIN::CreatePool(opSize, true)) {
 		return false;
 	}
-	if (false == stServerObjects::CreatePool(opSize, true)) {
+	if (false == PACKETS_OBJECT::CreatePool(opSize, true)) {
 		return false;
 	}
-	if (false == stServerState::CreatePool(opSize, true)) {
+	if (false == PACKETS_STATE::CreatePool(opSize, true)) {
 		return false;
 	}
-	if (false == stClientLogin::CreatePool(opSize, true)) {
+	if (false == PACKETC_LOGIN::CreatePool(opSize, true)) {
 		return false;
 	}
-	if (false == stClientObjects::CreatePool(opSize, true)) {
+	if (false == PACKETC_OBJECT::CreatePool(opSize, true)) {
 		return false;
 	}
-	if (false == stClientRequestState::CreatePool(opSize, true)) {
+	if (false == PACKETC_REQSTATE::CreatePool(opSize, true)) {
 		return false;
 	}
-	if (false == stClientState::CreatePool(opSize, true)) {
+	if (false == PACKETC_STATE::CreatePool(opSize, true)) {
+		return false;
+	}
+	if (false == PACKETC_CHAT::CreatePool(opSize, true)) {
 		return false;
 	}
 	return true;
@@ -47,121 +54,175 @@ bool cPacketManager::Initialize(size_t opSize = 20)
 void cPacketManager::Serialization(char* des,stPacket* pPacket)
 {
 	if (des == nullptr || pPacket == nullptr)
-		return;
-	des[0] = pPacket->type;
-	des[1] = packetSize[pPacket->type];
-	switch (des[0])
+		return; 
+	memset(des,0,MAX_OF_BUFFER);
+	pPacket->size = packetSize[pPacket->type];
+	WORD sizePacket = pPacket->size -1;
+	WORD len = 0;
+	switch (pPacket->type)
 	{
-	case ServerLoginCompletion:
+	case ServerLoginCompletion: {
 		PACKETS_LOGIN* pack = static_cast<PACKETS_LOGIN*>(pPacket);
-		memcpy(&des[2], pack, des[1]);
+		memcpy(des, pack, sizePacket);
 		break;
-	case ServerObjects:
+	}
+	case ServerObjects: {
 		PACKETS_OBJECT* pack = static_cast<PACKETS_OBJECT*>(pPacket);
-		memcpy(&des[2], pack, des[1]);
+		memcpy(des, pack, sizePacket);
 		break;
-	case ServerState:
+	}
+	case ServerState: {
 		PACKETS_STATE* pack = static_cast<PACKETS_STATE*>(pPacket);
-		memcpy(&des[2], pack, des[1]);
+		memcpy(des, pack, sizePacket);
 		break;
-	case ClientLogin:
+	}
+	case ClientLogin:{
 		PACKETC_LOGIN* pack = static_cast<PACKETC_LOGIN*>(pPacket);
-		memcpy(&des[2], pack, des[1]);
-		break;
-	case ClientObjectsCompletion:
+	memcpy(des, pack, sizePacket);
+	break; 
+	}
+	case ClientObjectsCompletion: {
 		PACKETC_OBJECT* pack = static_cast<PACKETC_OBJECT*>(pPacket);
-		memcpy(&des[2], pack, des[1]);
+		memcpy(des, pack, sizePacket);
 		break;
-	case ClientRequestState:
+	}
+	case ClientRequestState: {
 		PACKETC_REQSTATE* pack = static_cast<PACKETC_REQSTATE*>(pPacket);
-		memcpy(&des[2], pack, des[1]);
+		memcpy(des, pack, sizePacket);
 		break;
-	case ClientState:
+	}
+	case ClientState:{
 		PACKETC_STATE* pack = static_cast<PACKETC_STATE*>(pPacket);
-		memcpy(&des[2], pack, des[1]);
+		memcpy(des, pack, sizePacket);
 		break;
+	}
+	case ClientChat: {
+		PACKETC_CHAT* pack = static_cast<PACKETC_CHAT*>(pPacket);
+		len = strlen(pack->chat);
+		pPacket->size = 4 + len;
+		memcpy(des, pack, sizePacket);
+		break;
+	}
 	default:
 		break;
 	}
-	des[des[1] + 2] = END_MARK;
-	des[des[1] + 3] = '\0';
+	des[pPacket->size-1] = END_MARK;
 }
 
 stPacket* cPacketManager::Deserialization(const char* buffer)
 {
 	stPacket* pPacket = nullptr;
-	switch (buffer[0])
-	{
-	case ServerLoginCompletion:
+	WORD	size;
+	memcpy(&size,&buffer[1],2);
+	if (buffer[size-1] != END_MARK) {
+		DeletePacket(pPacket);
+		LOG_ERROR("Invalid Endmark");
+		return nullptr;
+	}
+	switch (buffer[0]){
+	case ServerLoginCompletion: {
 		pPacket = NEW(PACKETS_LOGIN);
 		PACKETS_LOGIN* pack = static_cast<PACKETS_LOGIN*>(pPacket);
-		memcpy(pack, &buffer[2], buffer[1]);
+		memcpy(pack,buffer, size);
 		break;
-	case ServerObjects:
+	}
+	case ServerObjects: {
 		pPacket = NEW(PACKETS_OBJECT);
 		PACKETS_OBJECT* pack = static_cast<PACKETS_OBJECT*>(pPacket);
-		memcpy(pack, &buffer[2], buffer[1]);
+		memcpy(pack,buffer, size);
 		break;
-	case ServerState:
+	}
+	case ServerState: {
 		pPacket = NEW(PACKETS_STATE);
 		PACKETS_STATE* pack = static_cast<PACKETS_STATE*>(pPacket);
-		memcpy(pack, &buffer[2], buffer[1]);
+		memcpy(pack,buffer, size);
 		break;
-	case ClientLogin:
+	}
+	case ClientLogin: {
 		pPacket = NEW(PACKETC_LOGIN);
 		PACKETC_LOGIN* pack = static_cast<PACKETC_LOGIN*>(pPacket);
-		memcpy(pack, &buffer[2], buffer[1]);
+		memcpy(pack,buffer, size);
 		break;
-	case ClientObjectsCompletion:
+	}
+	case ClientObjectsCompletion: {
 		pPacket = NEW(PACKETC_OBJECT);
 		PACKETC_OBJECT* pack = static_cast<PACKETC_OBJECT*>(pPacket);
-		memcpy(pack, &buffer[2], buffer[1]);
+		memcpy(pack,buffer, size);
 		break;
-	case ClientRequestState:
+	}
+	case ClientRequestState: {
 		pPacket = NEW(PACKETC_REQSTATE);
 		PACKETC_REQSTATE* pack = static_cast<PACKETC_REQSTATE*>(pPacket);
-		memcpy(pack, &buffer[2], buffer[1]);
+		memcpy(pack,buffer, size);
 		break;
-	case ClientState:
+	}
+	case ClientState:{
 		pPacket = NEW(PACKETC_STATE);
 		PACKETC_STATE* pack = static_cast<PACKETC_STATE*>(pPacket);
-		memcpy(pack, &buffer[2], buffer[1]);
+		memcpy(pack,buffer, size);
 		break;
+	}
+	case ClientChat: {
+		pPacket = NEW(PACKETC_CHAT);
+		PACKETC_CHAT* pack = static_cast<PACKETC_CHAT*>(pPacket);
+		memcpy(pack,buffer, size);
+		break;
+	}
 	default:
 		break;
 	}
 	return pPacket;
 }
 
-void DeletePacket(stPacket* pPacket)
+void cPacketManager::DeletePacket(stPacket* pPacket)
 {
 	if (nullptr == pPacket) {
 		return;
 	}
-	/// ObjectPool's operate delete dispatch
 	switch (pPacket->type)
 	{
-	case ServerLoginCompletion:
+	case ServerLoginCompletion: {
+		PACKETS_LOGIN* pack = static_cast<PACKETS_LOGIN*>(pPacket);
+		pack->bResult = false;
 		RELEASE(PACKETS_LOGIN, pPacket);
 		break;
-	case ServerObjects:
+	}
+	case ServerObjects: {
+		PACKETS_OBJECT* pack = static_cast<PACKETS_OBJECT*>(pPacket);
 		RELEASE(PACKETS_OBJECT, pPacket);
 		break;
-	case ServerState:
+	}
+	case ServerState: {
+		PACKETS_STATE* pack = static_cast<PACKETS_STATE*>(pPacket);
 		RELEASE(PACKETS_STATE, pPacket);
 		break;
-	case ClientLogin:
+	}
+	case ClientLogin: {
+		PACKETC_LOGIN* pack = static_cast<PACKETC_LOGIN*>(pPacket);
 		RELEASE(PACKETC_LOGIN, pPacket);
 		break;
-	case ClientObjectsCompletion:
+	}
+	case ClientObjectsCompletion:{
+		PACKETC_OBJECT* pack = static_cast<PACKETC_OBJECT*>(pPacket);
 		RELEASE(PACKETC_OBJECT, pPacket);
 		break;
-	case ClientRequestState:
+	}
+	case ClientRequestState:{
+		PACKETC_REQSTATE* pack = static_cast<PACKETC_REQSTATE*>(pPacket);
 		RELEASE(PACKETC_REQSTATE, pPacket);
 		break;
-	case ClientState:
-		RELEASE(PACKETC_STATE, pPacket);
+	}
+	case ClientState:{
+		PACKETC_STATE* pack = static_cast<PACKETC_STATE*>(pPacket);
+		RELEASE(PACKETC_STATE, pPacket); 
 		break;
+	}
+	case ClientChat:{
+		PACKETC_CHAT* pack = static_cast<PACKETC_CHAT*>(pPacket);
+		memset(pack->chat,0,256);
+		RELEASE(PACKETC_CHAT, pPacket);
+		break;
+	}
 	default:
 		LOG_ERROR("Invalide Packet");
 	}

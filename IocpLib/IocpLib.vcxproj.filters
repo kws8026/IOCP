@@ -68,6 +68,9 @@
     <ClInclude Include="DummyClients.h">
       <Filter>세션 파일</Filter>
     </ClInclude>
+    <ClInclude Include="Packet.h">
+      <Filter>세션 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="IocpLib.cpp">
@@ -110,6 +113,9 @@
       <Filter>세션 파일</Filter>
     </ClCompile>
     <ClCompile Include="DummyClients.cpp">
+      <Filter>세션 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Packet.cpp">
       <Filter>세션 파일</Filter>
     </ClCompile>
   </ItemGroup>

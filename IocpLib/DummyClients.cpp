@@ -13,9 +13,11 @@ DummyClients::~DummyClients()
 	}
 }
 
-bool DummyClients::CreateDummy(size_t num)
+bool DummyClients::CreateDummy(size_t num, const char* serveraddr)
 {
-	CreateIOPool(num * 10);
+	serverAddr = serveraddr;
+	CreateIOPool(num * 2);
+	mng_packet.Initialize(num * 2);
 	for (int i = 0; i < num; i++)
 	{
 		cServerSession* session = new cServerSession(serverAddr);
@@ -32,15 +34,21 @@ bool DummyClients::CreateDummy(size_t num)
 	return true;
 }
 
-bool DummyClients::Send(char* buf)
+bool DummyClients::Chat(char* buf)
 {
+	FastSpinlockGuard lock(lock_dummy);
+	PACKETC_CHAT* chat = NEW(PACKETC_CHAT);
+	strcpy_s(chat->chat,256,buf);
+	char send[MAX_OF_BUFFER*2] = {0,};
+	mng_packet.Serialization(send, chat);
 	for (int i = 0; i < vec_ServerSession.size(); i++)
 	{
-		if (vec_ServerSession[i]->PostSend(buf) == false)
+		if (vec_ServerSession[i]->PostSend(send) == false)
 			return false;
 		if (vec_ServerSession[i]->FlushSend() == false)
 			return false;
 	}
+	cPacketManager::DeletePacket(chat);
 	return true;
 }
 

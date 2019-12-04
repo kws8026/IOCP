@@ -163,6 +163,7 @@
     <ClInclude Include="Objectpool.h" />
     <ClInclude Include="OverlappedIOContext.h" />
     <ClInclude Include="CircularBuffer.h" />
+    <ClInclude Include="Packet.h" />
     <ClInclude Include="ServerSession.h" />
     <ClInclude Include="Singleton.h" />
     <ClInclude Include="Session.h" />
@@ -180,6 +181,7 @@
     <ClCompile Include="FastSpinlock.cpp" />
     <ClCompile Include="Logger.cpp" />
     <ClCompile Include="OverlappedIOContext.cpp" />
+    <ClCompile Include="Packet.cpp" />
     <ClCompile Include="ServerSession.cpp" />
     <ClCompile Include="Session.cpp" />
     <ClCompile Include="IocpLib.cpp" />

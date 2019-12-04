@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "ClientSession.h"
 #include "OverlappedIOContext.h"
+#include "ClientSessionManager.h"
 #include "CompletionPort.h"
 #include <string>
 
@@ -124,11 +125,19 @@ bool cClientSession::AcceptCompletion()
 
 void cClientSession::OnReceive()
 {
-	FastSpinlockGuard lock(lock_client);
-	mRecvBuffer.Commit();
-	if(false == PostSend(mRecvBuffer.pop())){
+	stPacket* packet = LPMNGPACKET->Deserialization(bufRecv.pop());
+	if (packet == nullptr)
 		return;
+	if (packet->type == ClientChat)
+	{
+		auto buffer = bufSend.Front();
+		LPMNGPACKET->Serialization(buffer, packet);
+		if(nullptr == buffer){
+			return;
+		}
+		bufSend.Commit();
 	}
+	cPacketManager::DeletePacket(packet);
 }
 
 void cClientSession::OnSend()

@@ -10,10 +10,10 @@ int main() {
 	if (IOCP->Initialize() == false) {
 		return -1;
 	}
-	if (IOCP->StartThreads(4) == false) {
+	CLIENTS->PrepareClientSessions();
+	if (IOCP->StartThreads(1) == false) {
 		return -1;
 	}
-	CLIENTS->PrepareClientSessions();
 
 	IOCP->StartAccept();
 	IOCP->Close();

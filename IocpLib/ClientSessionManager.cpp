@@ -15,10 +15,9 @@ ClientSessionManager::~ClientSessionManager()
 
 void ClientSessionManager::PrepareClientSessions()
 {
-
 	m_MaxSessionCount = 1000;
 	cClientSession::CreatePool(m_MaxSessionCount);
-
+	cPacketManager::Initialize(m_MaxSessionCount);
 	for (int i = 0; i < m_MaxSessionCount; ++i)
 	{
 		cClientSession* client = NEW(cClientSession);
@@ -26,14 +25,14 @@ void ClientSessionManager::PrepareClientSessions()
 		mFreeSessionList.push_back(client);
 		m_SessionList.push_back(client);
 	}
-	CreateIOPool(100);
+	CreateIOPool(m_MaxSessionCount);
 
 	LOG("MaxSessionCount: %d", m_MaxSessionCount);
 }
 
 void ClientSessionManager::ReturnClientSession(cClientSession* client)
 {
-	FastSpinlockGuard guard(mLock);
+	FastSpinlockGuard guard(lock_mngClinet);
 
 	client->ResetSession();
 
@@ -44,7 +43,7 @@ void ClientSessionManager::ReturnClientSession(cClientSession* client)
 
 bool ClientSessionManager::AcceptClientSessions()
 {
-	FastSpinlockGuard guard(mLock);
+	FastSpinlockGuard guard(lock_mngClinet);
 
 	while (mCurrentIssueCount - mCurrentReturnCount < m_MaxSessionCount)
 	{
