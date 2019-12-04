@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "OverlappedIOContext.h"
 #include "Session.h"
+#include "Packet.h"
+
 cSession::cSession(size_t recv, size_t send) :  
 	sock(INVALID_SOCKET), bufRecv(recv), bufSend(send)
 {
@@ -115,7 +117,7 @@ void cSession::RecvCompletion()
 void cSession::DisconnectCompletion()
 {
 	closesocket(sock);
-	OnRelease();
+	OnDisconnect();
 }
 
 void cSession::Close()

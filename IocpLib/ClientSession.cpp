@@ -123,22 +123,43 @@ bool cClientSession::AcceptCompletion()
 	return true;
 }
 
+void cClientSession::EchoPacket(stPacket* packet)
+{
+	auto buffer = bufSend.Front();
+	LPMNGPACKET->Serialization(buffer, packet);
+	if (nullptr == buffer) {
+		cPacketManager::DeletePacket(packet);
+		return;
+	}
+	bufSend.Commit();
+}
+
 void cClientSession::OnReceive()
 {
 	stPacket* packet = LPMNGPACKET->Deserialization(bufRecv.pop());
 	if (packet == nullptr)
 		return;
-	if (packet->type == ClientChat)
-	{
-		auto buffer = bufSend.Front();
-		LPMNGPACKET->Serialization(buffer, packet);
-		if(nullptr == buffer){
-			return;
-		}
-		bufSend.Commit();
+	switch (packet->type) {
+	case ServerLoginCompletion: {
+		break;
+	}
+	case ServerObjects: {
+		break;
+	}
+	case ServerState: {
+		EchoPacket(packet);
+		break;
+	}
+	case ClientChat: {
+		EchoPacket(packet);
+		break;
+	}
+	default:
+		break;
 	}
 	cPacketManager::DeletePacket(packet);
 }
+
 
 void cClientSession::OnSend()
 {
@@ -149,6 +170,7 @@ void cClientSession::OnDisconnect()
 	char clientIP[32] = { 0, };
 	inet_ntop(AF_INET, &(addr.sin_addr), clientIP, 32 - 1);
 	LOG("Client Disconnected: IP=%s, PORT=%d", clientIP, ntohs(addr.sin_port));
+	CLIENTS->ReturnClientSession(this);
 }
 
 void cClientSession::OnRelease()

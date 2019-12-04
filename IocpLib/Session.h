@@ -7,6 +7,7 @@
 #include "FastSpinlock.h"
 #include "CircularBuffer.h"
 
+struct stPacket;
 typedef class cSession
 {
 protected:

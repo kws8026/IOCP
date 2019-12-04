@@ -18,6 +18,7 @@ public:
 
 	bool		PostAccept();
 	bool		AcceptCompletion();
+	void		EchoPacket(stPacket* packet);
 
 	virtual void OnReceive();
 	virtual void OnSend();

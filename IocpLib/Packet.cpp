@@ -56,7 +56,8 @@ void cPacketManager::Serialization(char* des,stPacket* pPacket)
 	if (des == nullptr || pPacket == nullptr)
 		return; 
 	memset(des,0,MAX_OF_BUFFER);
-	pPacket->size = packetSize[pPacket->type];
+	if(pPacket->size == 0)
+		pPacket->size = packetSize[pPacket->type];
 	WORD sizePacket = pPacket->size -1;
 	WORD len = 0;
 	switch (pPacket->type)
@@ -100,6 +101,8 @@ void cPacketManager::Serialization(char* des,stPacket* pPacket)
 		PACKETC_CHAT* pack = static_cast<PACKETC_CHAT*>(pPacket);
 		len = strlen(pack->chat);
 		pPacket->size = 4 + len;
+		if (sizePacket < pPacket->size)
+			sizePacket = pPacket->size;
 		memcpy(des, pack, sizePacket);
 		break;
 	}

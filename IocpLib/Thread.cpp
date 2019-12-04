@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "ClientSessionManager.h"
 #include "Thread.h"
+#include "Logger.h"
 #include "OverlappedIOContext.h"
 
 cThread::cThread(HANDLE hThread, HANDLE hCompletionPort)
