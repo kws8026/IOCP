@@ -15,7 +15,7 @@ private:
 	cFastSpinlock(const cFastSpinlock& rhs);
 	cFastSpinlock& operator=(const cFastSpinlock& rhs);
 
-	volatile long mLockFlag;
+	volatile long lockflag;
 }SPINLOCK;
 
 class FastSpinlockGuard
@@ -25,7 +25,6 @@ public:
 	{
 		mLock.EnterLock();
 	}
-
 	~FastSpinlockGuard()
 	{
 		mLock.LeaveLock();

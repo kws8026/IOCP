@@ -61,19 +61,19 @@ typedef struct stClientState : public stPacket, cObjectPool<stClientState> {
 typedef  struct stClientChat : public stPacket, cObjectPool<stClientChat> {
 	char chat[256] = "";
 	stClientChat() :stPacket(ClientChat) {};
-}PACKETC_CHAT;
+}PACKET_CHAT;
 #pragma pack(pop)
 class cPacketManager
 {
-	SPINLOCK		lock_packet;
+	static SPINLOCK	lock_packet;
 	static size_t	packetSize[256];
 public:
 	cPacketManager();
 	~cPacketManager();
 	static bool			Initialize(size_t opSize);
 
-	void				Serialization(char* des, stPacket* pPacket);
-	stPacket*			Deserialization(const char* buffer);
+	static void			Serialization(char* des, stPacket* pPacket);
+	static stPacket*	Deserialization(const char* buffer);
 
 	static void			DeletePacket(stPacket* pPacket);
 };

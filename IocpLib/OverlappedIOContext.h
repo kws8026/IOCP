@@ -34,35 +34,30 @@ typedef struct stSendContext
 		: stOverlappedIOContext(IO_Send) {
 	}
 }CONTEXT_SEND, * LPCONTEXT_SEND;
-
 typedef struct stRecvContext	
 	: public stOverlappedIOContext, cObjectPool<stRecvContext> {
 	stRecvContext() 
 		: stOverlappedIOContext(IO_Recv) {
 	}
 }CONTEXT_RECV, * LPCONTEXT_RECV;
-
 typedef struct stPreRecvContext 
 	: public stOverlappedIOContext, cObjectPool<stPreRecvContext> {
 	stPreRecvContext() 
 		: stOverlappedIOContext(IO_RecvZero) {
 	}
 }CONTEXT_PRERECV, * LPCONTEXT_PRERECV;
-
 typedef struct stAcceptContext	
 	: public stOverlappedIOContext, cObjectPool<stAcceptContext> {
 	stAcceptContext()
 		: stOverlappedIOContext(IO_Accept) {
 	}
 }CONTEXT_ACCEPT, * LPCONTEXT_ACCEPT;
-
 typedef struct stConnectContext 
 	: public stOverlappedIOContext, cObjectPool<stConnectContext> {
 	stConnectContext() 
 		: stOverlappedIOContext(IO_Connect) {
 	}
 }CONTEXT_CON, * LPCONTEXT_CON;
-
 typedef struct stDisconnectContext 
 	: public stOverlappedIOContext, cObjectPool<stDisconnectContext> {
 	stDisconnectContext() 

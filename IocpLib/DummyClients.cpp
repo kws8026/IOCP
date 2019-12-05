@@ -37,10 +37,10 @@ bool DummyClients::CreateDummy(size_t num, const char* serveraddr)
 bool DummyClients::Chat(char* buf)
 {
 	FastSpinlockGuard lock(lock_dummy);
-	PACKETC_CHAT* chat = NEW(PACKETC_CHAT);
+	PACKET_CHAT* chat = NEW(PACKET_CHAT);
 	strcpy_s(chat->chat,256,buf);
 	char send[MAX_OF_BUFFER*2] = {0,};
-	mng_packet.Serialization(send, chat);
+	cPacketManager::Serialization(send, chat);
 	for (int i = 0; i < vec_ServerSession.size(); i++)
 	{
 		if (vec_ServerSession[i]->PostSend(send) == false)

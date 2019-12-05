@@ -10,7 +10,7 @@ int main() {
 	if (IOCP->StartThreads(6) == false) {
 		return -1;
 	}
-
+	Sleep(50);
 	char buf[256];
 	int  size;
 	std::cout << "input num of dummy : ";

@@ -126,7 +126,7 @@ bool cClientSession::AcceptCompletion()
 void cClientSession::EchoPacket(stPacket* packet)
 {
 	auto buffer = bufSend.Front();
-	LPMNGPACKET->Serialization(buffer, packet);
+	cPacketManager::Serialization(buffer, packet);
 	if (nullptr == buffer) {
 		cPacketManager::DeletePacket(packet);
 		return;
@@ -136,7 +136,7 @@ void cClientSession::EchoPacket(stPacket* packet)
 
 void cClientSession::OnReceive()
 {
-	stPacket* packet = LPMNGPACKET->Deserialization(bufRecv.pop());
+	stPacket* packet = cPacketManager::Deserialization(bufRecv.pop());
 	if (packet == nullptr)
 		return;
 	switch (packet->type) {

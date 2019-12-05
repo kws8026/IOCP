@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "FastSpinlock.h"
-cFastSpinlock::cFastSpinlock() : mLockFlag(0)
+cFastSpinlock::cFastSpinlock() : lockflag(0)
 {
 }
 
@@ -14,7 +14,7 @@ void cFastSpinlock::EnterLock()
 {
 	for (int nloops = 0; ; nloops++)
 	{
-		if (InterlockedExchange(&mLockFlag, 1) == 0) {
+		if (InterlockedExchange(&lockflag, 1) == 0) {
 			return;
 		}
 
@@ -25,5 +25,5 @@ void cFastSpinlock::EnterLock()
 
 void cFastSpinlock::LeaveLock()
 {
-	InterlockedExchange(&mLockFlag, 0);
+	InterlockedExchange(&lockflag, 0);
 }

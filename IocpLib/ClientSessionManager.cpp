@@ -7,7 +7,7 @@
 
 ClientSessionManager::~ClientSessionManager()
 {
-	for (auto it : mFreeSessionList)
+	for (auto it : list_freeSession)
 	{
 		delete it;
 	}
@@ -15,19 +15,19 @@ ClientSessionManager::~ClientSessionManager()
 
 void ClientSessionManager::PrepareClientSessions()
 {
-	m_MaxSessionCount = 1000;
-	cClientSession::CreatePool(m_MaxSessionCount);
-	cPacketManager::Initialize(m_MaxSessionCount);
-	for (int i = 0; i < m_MaxSessionCount; ++i)
+	countMaxSession = 1000;
+	cClientSession::CreatePool(countMaxSession);
+	cPacketManager::Initialize(countMaxSession);
+	for (int i = 0; i < countMaxSession; ++i)
 	{
 		cClientSession* client = NEW(cClientSession);
 		client->ResetSession();
-		mFreeSessionList.push_back(client);
-		m_SessionList.push_back(client);
+		list_freeSession.push_back(client);
+		sessions.push_back(client);
 	}
-	CreateIOPool(m_MaxSessionCount);
+	CreateIOPool(countMaxSession*2);
 
-	LOG("MaxSessionCount: %d", m_MaxSessionCount);
+	LOG("MaxSessionCount: %d", countMaxSession);
 }
 
 void ClientSessionManager::ReturnClientSession(cClientSession* client)
@@ -36,7 +36,7 @@ void ClientSessionManager::ReturnClientSession(cClientSession* client)
 
 	client->ResetSession();
 
-	mFreeSessionList.push_back(client);
+	list_freeSession.push_back(client);
 
 	++mCurrentReturnCount;
 }
@@ -45,10 +45,10 @@ bool ClientSessionManager::AcceptClientSessions()
 {
 	FastSpinlockGuard guard(lock_mngClinet);
 
-	while (mCurrentIssueCount - mCurrentReturnCount < m_MaxSessionCount)
+	while (mCurrentIssueCount - mCurrentReturnCount < countMaxSession)
 	{
-		cClientSession* newClient = mFreeSessionList.back();
-		mFreeSessionList.pop_back();
+		cClientSession* newClient = list_freeSession.back();
+		list_freeSession.pop_back();
 
 		++mCurrentIssueCount;
 
@@ -63,9 +63,9 @@ bool ClientSessionManager::AcceptClientSessions()
 
 cClientSession* ClientSessionManager::GetClientSession(const int index)
 {
-	if (index < 0 || index >= m_MaxSessionCount) {
+	if (index < 0 || index >= countMaxSession) {
 		return nullptr;
 	}
 
-	return m_SessionList[index];
+	return sessions[index];
 }

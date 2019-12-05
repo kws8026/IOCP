@@ -11,7 +11,7 @@ int main() {
 		return -1;
 	}
 	CLIENTS->PrepareClientSessions();
-	if (IOCP->StartThreads(1) == false) {
+	if (IOCP->StartThreads(4) == false) {
 		return -1;
 	}
 

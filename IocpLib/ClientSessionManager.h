@@ -12,19 +12,16 @@ class cClientSession;
 class ClientSessionManager : public cSingleton<ClientSessionManager>
 {
 	typedef std::list<cClientSession*> ClientList;
-	ClientList		mFreeSessionList;
-	std::vector<cClientSession*> m_SessionList;
-
+	ClientList		list_freeSession;
+	std::vector<cClientSession*> sessions;
 	cPacketManager	mng_packet;
-
-	cFastSpinlock	lock_mngClinet;
-
+	SPINLOCK		lock_mngClinet;
 	uint64_t		mCurrentIssueCount;
 	uint64_t		mCurrentReturnCount;
-	int				m_MaxSessionCount;
+	int				countMaxSession;
 
 public:
-	ClientSessionManager() : mCurrentIssueCount(0), mCurrentReturnCount(0), m_MaxSessionCount(0) {};
+	ClientSessionManager() : mCurrentIssueCount(0), mCurrentReturnCount(0), countMaxSession(0) {};
 
 	~ClientSessionManager();
 
@@ -33,8 +30,7 @@ public:
 
 	void ReturnClientSession(cClientSession* client);
 
-	int MaxClientSessionCount() { return m_MaxSessionCount; }
-	int GetClientsConnectedSize() { return m_SessionList.size(); }
+	int GetClientsConnectedSize() { return sessions.size(); }
 	cClientSession* GetClientSession(const int index);
 	cPacketManager* GetPacketManager() { return &mng_packet; }
 };

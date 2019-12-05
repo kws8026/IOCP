@@ -19,11 +19,11 @@ cServerSession::~cServerSession()
 
 void cServerSession::OnReceive()
 {
-	stPacket* packet = LPMNGPACKET->Deserialization(bufRecv.pop());
+	stPacket* packet = cPacketManager::Deserialization(bufRecv.pop());
 	if (packet == nullptr) {
 		return;
 	}
-	LOG("RECV : %s",static_cast<PACKETC_CHAT*>(packet)->chat);
+	LOG("RECV : %s",static_cast<PACKET_CHAT*>(packet)->chat);
 	cPacketManager::DeletePacket(packet);
 }
 

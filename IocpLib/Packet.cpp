@@ -22,7 +22,7 @@ bool cPacketManager::Initialize(size_t opSize = 20)
 	packetSize[ClientObjectsCompletion] = sizeof(PACKETC_OBJECT) + 1;
 	packetSize[ClientRequestState] = sizeof(PACKETC_REQSTATE) + 1;
 	packetSize[ClientState] = sizeof(PACKETC_STATE) + 1;
-	packetSize[ClientChat] = sizeof(PACKETC_CHAT) + 1;
+	packetSize[ClientChat] = sizeof(PACKET_CHAT) + 1;
 	// Packet ObjectPool Create by Size
 	if (false == PACKETS_LOGIN::CreatePool(opSize, true)) {
 		return false;
@@ -45,7 +45,7 @@ bool cPacketManager::Initialize(size_t opSize = 20)
 	if (false == PACKETC_STATE::CreatePool(opSize, true)) {
 		return false;
 	}
-	if (false == PACKETC_CHAT::CreatePool(opSize, true)) {
+	if (false == PACKET_CHAT::CreatePool(opSize, true)) {
 		return false;
 	}
 	return true;
@@ -98,7 +98,7 @@ void cPacketManager::Serialization(char* des,stPacket* pPacket)
 		break;
 	}
 	case ClientChat: {
-		PACKETC_CHAT* pack = static_cast<PACKETC_CHAT*>(pPacket);
+		PACKET_CHAT* pack = static_cast<PACKET_CHAT*>(pPacket);
 		len = strlen(pack->chat);
 		pPacket->size = 4 + len;
 		if (sizePacket < pPacket->size)
@@ -166,8 +166,8 @@ stPacket* cPacketManager::Deserialization(const char* buffer)
 		break;
 	}
 	case ClientChat: {
-		pPacket = NEW(PACKETC_CHAT);
-		PACKETC_CHAT* pack = static_cast<PACKETC_CHAT*>(pPacket);
+		pPacket = NEW(PACKET_CHAT);
+		PACKET_CHAT* pack = static_cast<PACKET_CHAT*>(pPacket);
 		memcpy(pack,buffer, size);
 		break;
 	}
@@ -221,9 +221,9 @@ void cPacketManager::DeletePacket(stPacket* pPacket)
 		break;
 	}
 	case ClientChat:{
-		PACKETC_CHAT* pack = static_cast<PACKETC_CHAT*>(pPacket);
+		PACKET_CHAT* pack = static_cast<PACKET_CHAT*>(pPacket);
 		memset(pack->chat,0,256);
-		RELEASE(PACKETC_CHAT, pPacket);
+		RELEASE(PACKET_CHAT, pPacket);
 		break;
 	}
 	default:
