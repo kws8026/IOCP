@@ -17,14 +17,14 @@ void ClientSessionManager::PrepareClientSessions()
 {
 	countMaxSession = 1000;
 	cClientSession::CreatePool(countMaxSession);
-	cPacketManager::Initialize(countMaxSession);
+	cPacketManager::Initialize(countMaxSession*500);
 	for (int i = 0; i < countMaxSession; ++i)
 	{
 		cClientSession* client = NEW(cClientSession);
 		client->ResetSession();
 		list_freeSession.push_back(client);
 	}
-	CreateIOPool(countMaxSession*2);
+	CreateIOPool(countMaxSession*500);
 
 	LOG("MaxSessionCount: %d", countMaxSession);
 }

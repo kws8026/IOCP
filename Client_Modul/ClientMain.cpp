@@ -15,7 +15,7 @@ int main() {
 	int  size;
 	std::cout << "input num of dummy : ";
 	std::cin  >> size;
-	if (DUMMYS->CreateDummy(size, "223.194.100.64") == false) {
+	if (DUMMYS->CreateDummy(size, "127.0.0.1") == false) {
 		return -1;
 	}
 

@@ -16,11 +16,11 @@ bool ClientNetwork::Intialize(const char* serveraddr)
 		return false;
 	}
 	Sleep(50);
-	CreateIOPool(100);
+	CreateIOPool(500);
 	if (NetworkObject::CreatePool(500) == false) {
 		return false;
 	}
-	if (cPacketManager::Initialize(100) == false) {
+	if (cPacketManager::Initialize(500) == false) {
 		return false;
 	}
 	pSession = new cServerSession(serverAddr);

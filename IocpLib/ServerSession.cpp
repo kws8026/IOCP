@@ -6,7 +6,7 @@
 #include "Packet.h"
 using namespace NETWORK;
 
-#define SIZE_BUFFER_SERVER 4
+#define SIZE_BUFFER_SERVER 1024
 
 cServerSession::cServerSession(const char* serverAddr) : loginFlag(false),
 	serverAddr(serverAddr),SESSION(SIZE_BUFFER_SERVER, SIZE_BUFFER_SERVER)

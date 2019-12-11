@@ -35,7 +35,7 @@ void cLogger::Log(const char* msg, ...)
 	if (len < 0)
 		return;
 	cout << buffer << endl;
-	WriteFile(hFile, buffer, len+2, NULL, NULL);
+	//WriteFile(hFile, buffer, len+2, NULL, NULL);
 }
 
 void cLogger::Error(const char* fileName, const char* funcName, int line, const char* msg, ...)
@@ -52,7 +52,7 @@ void cLogger::Error(const char* fileName, const char* funcName, int line, const 
 	cout << "File: " << fileName << "\nFunction: " << funcName << "\nLine: " << line \
 		<< "\nError: " << buffer << endl;
 	buffer[len] = 0x0A0D;
-	WriteFile(hFile, buffer, len + 2, NULL, NULL);
+	//WriteFile(hFile, buffer, len + 2, NULL, NULL);
 }
 
 void cLogger::Error(const char* fileName, const char* funcName, int line, int code, const char* msg, ...)
@@ -69,5 +69,5 @@ void cLogger::Error(const char* fileName, const char* funcName, int line, int co
 	cout << "File: " << fileName << "\nFunction: " << funcName << "\nLine: " << line \
 		<< "\nError: " << buffer <<  "EroorCode: " << code << endl;
 	buffer[len] = 0x0A0D;
-	WriteFile(hFile, buffer, len + 2, NULL, NULL);
+	//WriteFile(hFile, buffer, len + 2, NULL, NULL);
 }

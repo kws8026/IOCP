@@ -7,7 +7,7 @@
 
 using namespace NETWORK;
 
-#define SIZE_BUFFER_CLIENT 4
+#define SIZE_BUFFER_CLIENT 512
 
 cClientSession::cClientSession() : SESSION(SIZE_BUFFER_CLIENT, SIZE_BUFFER_CLIENT)
 {
