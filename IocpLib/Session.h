@@ -6,8 +6,9 @@
 #include <Ws2tcpip.h>
 #include "FastSpinlock.h"
 #include "CircularBuffer.h"
-
 struct stPacket;
+class NetworkObject;
+
 typedef class cSession
 {
 protected:
@@ -19,6 +20,7 @@ protected:
 	CircularBuffer	bufSend;
 	int				countSendpadding;
 
+	NetworkObject*	player;
 public:
 					cSession(size_t recv, size_t send);
 	virtual			~cSession();
@@ -34,6 +36,9 @@ public:
 	void			SendCompletion();
 	void			RecvCompletion();
 	void			DisconnectCompletion();
+
+	void			SetPlayer(NetworkObject* object) {player = object;};
+	NetworkObject*	GetPlayer() { return player; };
 
 	void			Close();
 }SESSION, *LPSESSION;

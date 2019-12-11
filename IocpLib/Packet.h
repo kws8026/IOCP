@@ -19,6 +19,7 @@ enum HeaderType {
 	ClientState,
 	ClientChat
 };
+
 #pragma pack(push, 1)
 typedef struct stPacket {
 	unsigned char	type;
@@ -27,7 +28,8 @@ typedef struct stPacket {
 }HEAD, *LPHEAD;
 
 typedef struct stServerLogin : public stPacket, cObjectPool<stServerLogin> {
-	bool bResult;
+	bool	bResult;
+	DWORD	id_Object;
 	stServerLogin() :bResult(false),stPacket(ServerLoginCompletion) {};
 }PACKETS_LOGIN;
 typedef struct stServerObjects : public stPacket, cObjectPool<stServerObjects> {

@@ -23,11 +23,15 @@ void ClientSessionManager::PrepareClientSessions()
 		cClientSession* client = NEW(cClientSession);
 		client->ResetSession();
 		list_freeSession.push_back(client);
-		sessions.push_back(client);
 	}
 	CreateIOPool(countMaxSession*2);
 
 	LOG("MaxSessionCount: %d", countMaxSession);
+}
+
+void ClientSessionManager::AcceptCompletion(cClientSession* client)
+{
+	sessions.push_back(client);
 }
 
 void ClientSessionManager::ReturnClientSession(cClientSession* client)

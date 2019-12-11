@@ -8,12 +8,14 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Server", "IOCP\IOCP.vcxproj
 		{235F5225-EB98-470A-ACFA-3B59D54CFD06} = {235F5225-EB98-470A-ACFA-3B59D54CFD06}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Client_Modul", "Client_Modul\Client_Modul.vcxproj", "{F6ACE4D7-AEE3-4AF3-8183-D0ED4E6F5B54}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ClientModul", "Client_Modul\Client_Modul.vcxproj", "{F6ACE4D7-AEE3-4AF3-8183-D0ED4E6F5B54}"
 	ProjectSection(ProjectDependencies) = postProject
 		{235F5225-EB98-470A-ACFA-3B59D54CFD06} = {235F5225-EB98-470A-ACFA-3B59D54CFD06}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "IocpLib", "IocpLib\IocpLib.vcxproj", "{235F5225-EB98-470A-ACFA-3B59D54CFD06}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ClientApp", "ClientApp\ClientApp.vcxproj", "{E5EB6873-C372-422F-8780-350D54F3CC97}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -47,6 +49,14 @@ Global
 		{235F5225-EB98-470A-ACFA-3B59D54CFD06}.Release|x64.Build.0 = Release|x64
 		{235F5225-EB98-470A-ACFA-3B59D54CFD06}.Release|x86.ActiveCfg = Release|Win32
 		{235F5225-EB98-470A-ACFA-3B59D54CFD06}.Release|x86.Build.0 = Release|Win32
+		{E5EB6873-C372-422F-8780-350D54F3CC97}.Debug|x64.ActiveCfg = Debug|x64
+		{E5EB6873-C372-422F-8780-350D54F3CC97}.Debug|x64.Build.0 = Debug|x64
+		{E5EB6873-C372-422F-8780-350D54F3CC97}.Debug|x86.ActiveCfg = Debug|Win32
+		{E5EB6873-C372-422F-8780-350D54F3CC97}.Debug|x86.Build.0 = Debug|Win32
+		{E5EB6873-C372-422F-8780-350D54F3CC97}.Release|x64.ActiveCfg = Release|x64
+		{E5EB6873-C372-422F-8780-350D54F3CC97}.Release|x64.Build.0 = Release|x64
+		{E5EB6873-C372-422F-8780-350D54F3CC97}.Release|x86.ActiveCfg = Release|Win32
+		{E5EB6873-C372-422F-8780-350D54F3CC97}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

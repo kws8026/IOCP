@@ -3,7 +3,7 @@
 #define __CIRCULARBUFFER_UTIL
 
 #define MAX_OF_BUFFER 2000
-
+#include "FastSpinlock.h"
 class CircularBuffer
 {
 	struct Node {
@@ -20,10 +20,11 @@ class CircularBuffer
 			memcpy(data,object, MAX_OF_BUFFER);
 		}
 	};
-	Node*	buffer;
-	size_t	size;
-	Node*	front;
-	Node*	back;
+	SPINLOCK	lock;
+	Node*		buffer;
+	size_t		size;
+	Node*		front;
+	Node*		back;
 public:
 	CircularBuffer(size_t capacity = 128): size(0){
 		buffer = new Node[capacity];
@@ -43,18 +44,33 @@ public:
 	bool	IsEmpty() {
 		return size == 0;
 	}
-	bool	Commit() {
+	char*	Postpush() {
+		FastSpinlockGuard lock(lock);
 		if (!IsFull()) {
+			ZeroMemory(back->data, sizeof(back->data));
+			char* buff = back->data;
+			back = back->next;
 			size++;
-			return true;
+			return buff;
 		}
-		return false;
+		return nullptr;
 	}
-	char*	Front() {
-		ZeroMemory(front->data, sizeof(front->data));
-		return front->data;
+	char*	Ready() {
+		FastSpinlockGuard lock(lock);
+		if (!IsFull()) {
+			ZeroMemory(back->data, sizeof(back->data));
+			char* buff = back->data;
+			back = back->next;
+			return buff;
+		}
+		return nullptr;
+	}
+	void	Commit() {
+		FastSpinlockGuard lock(lock);
+		size++;
 	}
 	Node*	push(const char* object) {
+		FastSpinlockGuard lock(lock);
 		if (size != 0 && front == back)
 			return nullptr;
 		back->push(object);
@@ -63,6 +79,7 @@ public:
 		return back;
 	}
 	char*	pop() {
+		FastSpinlockGuard lock(lock);
 		if (size == 0)
 			return nullptr;
 		else{

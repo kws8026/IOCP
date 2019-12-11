@@ -7,7 +7,6 @@
 template <typename T>
 class cSingleton
 {
-	static SPINLOCK lock_single;
 	static T* pInstance;
 public:
 	cSingleton() {}
@@ -18,7 +17,6 @@ public:
 		}
 	}
 	static T* Instance() {
-		FastSpinlockGuard lock(lock_single);
 		if (pInstance == nullptr) {
 			pInstance = new T;
 		}
@@ -33,7 +31,4 @@ public:
 
 template<typename T> 
 T* cSingleton<T>::pInstance = nullptr;
-
-template<typename T>
-SPINLOCK cSingleton<T>::lock_single;
 #endif 

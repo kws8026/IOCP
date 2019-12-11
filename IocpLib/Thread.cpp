@@ -57,6 +57,7 @@ void cThread::OnIOCP()
 
 	case IO_Accept:
 		dynamic_cast<cClientSession*>(remote)->AcceptCompletion();
+		CLIENTS->AcceptCompletion(dynamic_cast<cClientSession*>(remote));
 		break;
 
 	case IO_Send:

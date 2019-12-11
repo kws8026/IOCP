@@ -3,7 +3,7 @@
 #include "ServerSession.h"
 #include "CompletionPort.h"
 #include "OverlappedIOContext.h"
-
+#include "NetworkObject.h"
 
 DummyClients::~DummyClients()
 {
@@ -17,7 +17,8 @@ bool DummyClients::CreateDummy(size_t num, const char* serveraddr)
 {
 	serverAddr = serveraddr;
 	CreateIOPool(num * 2);
-	mng_packet.Initialize(num * 2);
+	NetworkObject::CreatePool(num);
+	cPacketManager::Initialize(num * 2);
 	for (int i = 0; i < num; i++)
 	{
 		cServerSession* session = new cServerSession(serverAddr);

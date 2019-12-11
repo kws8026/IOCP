@@ -27,7 +27,7 @@ bool cSession::PostRecv()
 
 	DWORD recvbytes = 0;
 	DWORD flags = 0;
-	char* buffer = bufRecv.Front();
+	char* buffer = bufRecv.Postpush();
 	recvContext->buf.len = MAX_OF_BUFFER;
 	recvContext->buf.buf = buffer;
 
@@ -83,7 +83,9 @@ bool cSession::FlushSend()
 	LPWORD len = (LPWORD)&buffer[1];
 	sendContext->buf.len = *len;
 	sendContext->buf.buf = buffer;
-	LOG("SEND : %s", buffer+3);
+	if (buffer[0] == ClientState || buffer[0] == ServerState);
+	else
+		LOG("SEND : %s", buffer+3);
 
 	if (SOCKET_ERROR == WSASend(sock, &sendContext->buf, 1, &sendbytes, flags, (LPWSAOVERLAPPED)sendContext, NULL))
 	{
@@ -109,8 +111,6 @@ void cSession::SendCompletion()
 
 void cSession::RecvCompletion()
 {
-	FastSpinlockGuard criticalSection(lock_recv);
-	bufRecv.Commit();
 	OnReceive();
 }
 

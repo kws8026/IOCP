@@ -118,7 +118,7 @@ template<typename Object>
 SPINLOCK cObjectPool<Object>::lock_op;
 
 // 실제 사용 편이를 위한 함수 재정의
-#define NEW(Object_type) cObjectPool<Object_type>::New();
-#define RELEASE(Object_type,object)	cObjectPool<Object_type>::Release(static_cast<Object_type*>(object));
+#define NEW(Object_type) cObjectPool<Object_type>::New()
+#define RELEASE(Object_type,object)	cObjectPool<Object_type>::Release(static_cast<Object_type*>(object))
 
 #endif

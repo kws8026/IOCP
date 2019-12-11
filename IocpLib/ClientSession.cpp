@@ -125,13 +125,12 @@ bool cClientSession::AcceptCompletion()
 
 void cClientSession::EchoPacket(stPacket* packet)
 {
-	auto buffer = bufSend.Front();
+	auto buffer = bufSend.Postpush();
 	cPacketManager::Serialization(buffer, packet);
 	if (nullptr == buffer) {
 		cPacketManager::DeletePacket(packet);
 		return;
 	}
-	bufSend.Commit();
 }
 
 void cClientSession::OnReceive()
@@ -140,14 +139,41 @@ void cClientSession::OnReceive()
 	if (packet == nullptr)
 		return;
 	switch (packet->type) {
-	case ServerLoginCompletion: {
+	case ClientLogin: {
+		auto recv = static_cast<PACKETC_LOGIN*>(packet);
+		auto send = NEW(PACKETS_LOGIN);
+		send->bResult = true;
+		send->id_Object = (DWORD)this;
+		auto buffer = bufSend.Postpush();
+		cPacketManager::Serialization(buffer, send);
+		FlushSend();
+		LOG("Login Successful");
+		cPacketManager::DeletePacket(send);
 		break;
 	}
-	case ServerObjects: {
+	case ClientObjectsCompletion: {
 		break;
 	}
-	case ServerState: {
-		EchoPacket(packet);
+	case ClientRequestState: {
+		break;
+	}
+	case ClientState: {
+		auto recv = static_cast<PACKETC_STATE*>(packet);
+		auto send = NEW(PACKETS_STATE);
+		send->x = recv->x;
+		send->y = recv->y;
+		send->state = recv->state;
+		send->id_Object = (DWORD)this;
+		LOG("Send : %d move (%f,%f)", send->id_Object, send->x, send->y);
+		auto buffer = bufSend.Postpush();
+		cPacketManager::Serialization(buffer, send);
+		for (int i = 0; i < CLIENTS->GetClientsConnectedSize(); ++i)
+		{
+			auto session = CLIENTS->GetClientSession(i);
+			if(session != this)
+				session->PostSend(buffer);
+		}
+		cPacketManager::DeletePacket(send);
 		break;
 	}
 	case ClientChat: {

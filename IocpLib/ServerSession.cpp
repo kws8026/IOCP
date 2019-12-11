@@ -2,12 +2,13 @@
 #include "DummyClients.h"
 #include "ServerSession.h"
 #include "OverlappedIOContext.h"
+#include "NetworkObject.h"
 #include "Packet.h"
 using namespace NETWORK;
 
 #define SIZE_BUFFER_SERVER 4
 
-cServerSession::cServerSession(const char* serverAddr) : 
+cServerSession::cServerSession(const char* serverAddr) : loginFlag(false),
 	serverAddr(serverAddr),SESSION(SIZE_BUFFER_SERVER, SIZE_BUFFER_SERVER)
 {
 	sock = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, WSA_FLAG_OVERLAPPED);
@@ -19,11 +20,48 @@ cServerSession::~cServerSession()
 
 void cServerSession::OnReceive()
 {
-	stPacket* packet = cPacketManager::Deserialization(bufRecv.pop());
-	if (packet == nullptr) {
+	if (bufRecv.IsEmpty())
 		return;
+	stPacket* packet = cPacketManager::Deserialization(bufRecv.pop());
+	if (packet == nullptr)
+		return;
+
+	if (!loginFlag ) {
+		if (packet->type == ServerLoginCompletion){
+			auto pack = static_cast<PACKETS_LOGIN*>(packet);
+			if (pack->bResult == true)
+				loginFlag = true;
+			NetworkId = pack ->id_Object;
+		}
 	}
-	LOG("RECV : %s",static_cast<PACKET_CHAT*>(packet)->chat);
+	else {
+		switch (packet->type) {
+		case ServerObjects: {
+			break;
+		}
+		case ServerState: {
+			auto pack = static_cast<PACKETS_STATE*>(packet);
+			//LOG("RECV : %d Move (%f,%f)", pack->id_Object, pack->x, pack->y);
+			auto iter = others.find(pack->id_Object);
+			if (iter != others.end()) {
+				auto object = iter->second;
+				object->SetPos(pack->x, pack->y);
+			}
+			else {
+				auto newObject = NEW(NetworkObject);
+				others[pack->id_Object] = newObject;
+			}
+			//others.find(pack->id_Object)->second->SetPos(pack->x, pack->y);
+			break;
+		}
+		case ClientChat: {
+			LOG("RECV : %s", static_cast<PACKET_CHAT*>(packet)->chat);
+			break;
+		}
+		default:
+			break;
+		}
+	}
 	cPacketManager::DeletePacket(packet);
 }
 

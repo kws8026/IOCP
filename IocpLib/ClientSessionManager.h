@@ -28,6 +28,7 @@ public:
 	void PrepareClientSessions();
 	bool AcceptClientSessions();
 
+	void AcceptCompletion(cClientSession* client);
 	void ReturnClientSession(cClientSession* client);
 
 	int GetClientsConnectedSize() { return sessions.size(); }

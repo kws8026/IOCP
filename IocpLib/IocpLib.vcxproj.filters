@@ -71,6 +71,9 @@
     <ClInclude Include="Packet.h">
       <Filter>세션 파일</Filter>
     </ClInclude>
+    <ClInclude Include="NetworkObject.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="IocpLib.cpp">
@@ -117,6 +120,9 @@
     </ClCompile>
     <ClCompile Include="Packet.cpp">
       <Filter>세션 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="NetworkObject.cpp">
+      <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
