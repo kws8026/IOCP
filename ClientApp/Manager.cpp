@@ -55,6 +55,7 @@ void Manager::movePos(float x, float y)
 
 int Manager::update()
 {
+	FastSpinlockGuard lock(lock_mng);
 	auto others = pSession->GetOthers();
 	if (others.size() > objects.size()) {
 		auto iter = others.begin();
@@ -62,6 +63,7 @@ int Manager::update()
 			DWORD id = iter->first;
 			if (objects.find(id) == objects.end()) {
 				objects[id] = new Object(pTextures->peek(), iter->second);
+				LOG("new Object Created : %d", id);
 			}
 		}
 	}
@@ -91,9 +93,9 @@ Vector2D Manager::GetPos()
 
 void Manager::SetPlayer(Object* player)
 {
+	FastSpinlockGuard lock(lock_mng);
 	std::map<DWORD,NetworkObject*> others = pSession->GetOthers();
 	DWORD id = pSession->GetId();
-	objects[id] = player;
 	auto newObject = NEW(NetworkObject);
 	others[id] = newObject;
 	player->setNetwork(newObject);

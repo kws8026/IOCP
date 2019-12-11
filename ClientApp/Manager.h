@@ -1,11 +1,13 @@
 ﻿#pragma once
 #include "Renderer.h"
 #include "Singleton.h"
+#include "FastSpinlock.h"
 #include <map>
 
 class cServerSession;
 class Manager :public cSingleton<Manager>
 {
+	SPINLOCK		lock_mng;
 	cServerSession*	pSession;
 	Renderer*		pRenderer;
 	Textures*		pTextures;

@@ -10,12 +10,15 @@ using namespace std;
 #pragma comment( lib, "ws2_32.lib")
 
 int main() {
+	if (INIT_LOG() == false) {
+		return -1;
+	}
 	ClientNetwork client;
 	Renderer renderer;
 	Textures textures(1);
 	textures.push('@');
 	Object player(textures.peek());
-	client.Intialize("127.0.0.1");
+	client.Intialize("223.194.100.64");
 	Manager::Instance()->initializing(&renderer, &textures, client.GetSeesion());
 	while (true) {
 		if (client.Connect())
@@ -33,6 +36,7 @@ int main() {
 		client.CheckLogin(bFlag);
 	}
 	Manager::Instance()->SetPlayer(&player);
+	player.movePos(0, 0, { 120,25 });
 	char key;
 	while (true) {
 		renderer.clearAll();

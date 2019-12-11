@@ -25,13 +25,13 @@ void cServerSession::OnReceive()
 	stPacket* packet = cPacketManager::Deserialization(bufRecv.pop());
 	if (packet == nullptr)
 		return;
-
 	if (!loginFlag ) {
 		if (packet->type == ServerLoginCompletion){
 			auto pack = static_cast<PACKETS_LOGIN*>(packet);
+			NetworkId = pack->id_Object;
+			LOG("your NetworkId : %d", pack->id_Object);
 			if (pack->bResult == true)
 				loginFlag = true;
-			NetworkId = pack ->id_Object;
 		}
 	}
 	else {
@@ -50,6 +50,7 @@ void cServerSession::OnReceive()
 			else {
 				auto newObject = NEW(NetworkObject);
 				others[pack->id_Object] = newObject;
+				LOG("connect new player : %d", pack->id_Object);
 			}
 			//others.find(pack->id_Object)->second->SetPos(pack->x, pack->y);
 			break;
